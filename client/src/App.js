@@ -18,7 +18,7 @@ class App extends Component {
 
     callAPI() {
 
-        fetch("http://localhost:9000/api")
+        fetch("http://catchthatflow.com:9000/api")
 
             .then(res => res.text())
 
@@ -26,6 +26,7 @@ class App extends Component {
 
             .catch(err => err);
 
+	fetch("http://catchthatflow.com:9000/api/login")
     }
 
 
