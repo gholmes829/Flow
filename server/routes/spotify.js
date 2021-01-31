@@ -6,8 +6,8 @@ var router = express.Router();
 
 //Spotify API
 var client_id = 'c7cca4bb63634ddf8e6d205c9b23a7b6'; // Your client id
-var client_secret = '849cf7b45dd849ed97ec6990bb6896a6'; // Your secret
-var redirect_uri = 'http://catchthatflow.com:9000/callback/';
+var client_secret = '849cf7b45dd849ed97ec6990bb6896a6';
+var redirect_uri = 'http://catchthatflow.com:9000/spotify/callback/';
 var stateKey = 'spotify_auth_state';
 
 var generateRandomString = function(length) {
@@ -21,31 +21,27 @@ var generateRandomString = function(length) {
 };
 
 router.get('/login', function(req, res, next) {
-  console.log('Recieved login request!!');
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
   
-  // your application requests authorization
+  // requesting authorization
   var scope = 'user-read-private user-read-email';
-  var url1 = 'https://accounts.spotify.com/authorize?';
-  var url2 = querystring.stringify({
+  var url = 'https://accounts.spotify.com/authorize?' + 
+             querystring.stringify({
                response_type: 'code',
                client_id: client_id,
                scope: scope,
                redirect_uri: redirect_uri,
                state: state
              });
-  var url = url1 + url2;
 
-  console.log('About to redirect!');
   res.redirect(url);
-  console.log('Finished rerouting');
+
 });
 
 
 router.get('/callback', function(req, res) {
-  console.log('Callback!');
-  // your application requests refresh and access tokens
+  // requesting refresh and access tokens
   // after checking the state parameter
   var code = req.query.code || null;
   var state = req.query.state || null;
@@ -80,12 +76,12 @@ router.get('/callback', function(req, res) {
           json: true
         };
 
-        // use the access token to access the Spotify Web API
+        // using the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
           console.log(body);
         });
 
-        // we can also pass the token to the browser to make requests from there
+        // passing the token to the browser to make requests from there
         res.redirect('/#' +
           querystring.stringify({
             access_token: access_token,
@@ -102,7 +98,6 @@ router.get('/callback', function(req, res) {
 });
 
 router.get('/refresh_token', function(req, res) {
-  console.log('Refresh token!');
   // requesting access token from refresh token
   var refresh_token = req.query.refresh_token;
   var authOptions = {

@@ -24,9 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/login', spotifyRouter);
-app.use('/callback', spotifyRouter);
-app.use('/refresh_token', spotifyRouter);
+app.use('/spotify', spotifyRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
