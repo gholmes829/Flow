@@ -5,7 +5,7 @@
  * Class representing the API
  */
 
-export var SpotifyWebApi = (function () {
+var SpotifyWebApi = (function () {
   var _baseUri = 'https://api.spotify.com/v1';
   var _accessToken = null;
   var _promiseImplementation = null;

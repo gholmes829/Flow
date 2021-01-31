@@ -1,10 +1,15 @@
 var express = require('express');
 var request = require('request');
 var querystring = require('querystring');
-
+var spotify = require('spotify-web-api');
 var router = express.Router();
 
 //Spotify API
+var spotifyAPI = new SpotifyWebApi();
+var accesToken = '';
+var refreshToken = '';
+var loggedIn = false;
+
 var client_id = 'c7cca4bb63634ddf8e6d205c9b23a7b6'; // Your client id
 var client_secret = '849cf7b45dd849ed97ec6990bb6896a6';
 var redirect_uri = 'http://catchthatflow.com:9000/spotify/callback/';
@@ -19,6 +24,19 @@ var generateRandomString = function(length) {
   }
   return text;
 };
+
+router.get('/playlist', function(req, res, next) {
+		
+		spotifyAPI.getUserPlaylists().then(
+			function(data) {
+				console.log(data);
+			},
+			function(err) {
+				console.log(err);
+			}
+		);
+	}
+}
 
 router.get('/login', function(req, res, next) {
   var state = generateRandomString(16);
@@ -70,6 +88,10 @@ router.get('/callback', function(req, res) {
       if (!error && response.statusCode === 200) {
         var access_token = body.access_token,
             refresh_token = body.refresh_token;
+		// modify
+		accessToken = access_token;
+		refreshToken = refresh_token;
+		spotifyAPI.setAccessToken(access_token);
         var options = {
           url: 'https://api.spotify.com/v1/me',
           headers: { 'Authorization': 'Bearer ' + access_token },

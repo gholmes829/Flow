@@ -1,32 +1,11 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
-import { SpotifyWebApi } from './spotify-web-api.js';
 import "./App.css";
 
 class App extends Component {
     constructor(props) {
         super(props);
         this.state = { };
-	var spotifyAPI = new SpotifyWebApi();
-	window.addEventListener('DOMContentLoaded', (event) => {
-		var url = window.location.hash;
-		var loggedIn = (url !== '');
-		var split = url.split('&');
-		var accessToken = loggedIn ? split[0].substr(1).split('=')[1]: '';
-		var refreshToken = loggedIn ?  split[1].split('=')[1]: '';
-		if (loggedIn) {
-			spotifyAPI.setAccessToken(accessToken);
-			spotifyAPI.getUserPlaylists()
-			.then(
-			function(data) {
-				console.log(data);
-			},
-			function(err) {
-				console.log(err);
-			}
-			);
-		}
-	});
     }
 
     //callAPI() {
@@ -48,7 +27,7 @@ class App extends Component {
                     <h1 className="App-title">Welcome to React</h1>
                 </header>
 		<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
-                <p className="App-intro">{this.state.apiResponse}</p>
+		<a href="http://catchthatflow.com:9000/spotify/playlist">Playlist</a>
             </div>
         );
     }
