@@ -17,9 +17,9 @@ class App extends Component {
 
 	componentDidMount() {
 		console.log("Components mounted");
-		if (window.location.hash.includes("access_token")) {
+		if (window.location.hash.includes("success")) {
 			this.getUserData();
-			window.location.hash = "login-success";
+			//window.location.hash = "login-success";
 		}
 	}
 

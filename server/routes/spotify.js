@@ -125,11 +125,7 @@ router.get('/callback', function(req, res) {
         });
 
         // passing the token to the browser to make requests from there
-        res.redirect('/#' +
-          querystring.stringify({
-            access_token: access_token,
-            refresh_token: refresh_token
-          }));
+        res.redirect('http://catchthatflow.com/' + '#login-success');
       } else {
         res.redirect('/#' +
           querystring.stringify({
