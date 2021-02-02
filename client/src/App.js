@@ -1,28 +1,29 @@
 import React, { Component } from "react";
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
 
 class App extends Component {
 	constructor(props) {
-		console.log("Constructing");
 		super(props);
-        	this.state = {
+		this.state = {
 			username: "Default",
 			profilePic: '',
 			playlists: [],
-			selectedPlaylist: '',
+			selectedPlaylistId: '',
+			selectedPlaylist: []
 		};
-	this.getPlaylistData = this.getPlaylistData.bind(this);
-    	}
+		
+		// bound methods
+		this.getPlaylistData = this.getPlaylistData.bind(this);
+	}
 
+	// after components are mounted
 	componentDidMount() {
-		console.log("Components mounted");
 		if (window.location.hash.includes("success")) {
 			this.getUserData();
-			//window.location.hash = "login-success";
 		}
 	}
 
+	// get initial user data
 	getUserData() {
 		console.log("Requesting user data");		
 		fetch("http://catchthatflow.com:9000/spotify/userData")
@@ -34,27 +35,24 @@ class App extends Component {
 					playlists: res.playlists,
 				})
 			)
-			.then(res => console.log(this.state))
 			.catch(err => console.log(err));
-
-		//this.setState({...this.state, selectedPlaylist: this.state.playlists[0].id});
 	}
 
+	// get tracks from selected playlist
 	getPlaylistData() {
-		var id = this.state.playlists[0].id;
-		console.log("Selected playlist: " + id);
-		console.log("Requesting playlist tracks data");
+		this.setState({selectedPlaylistId: this.state.playlists[0].id});
+		var id = this.selectedPlaylistId;
 		fetch("http://catchthatflow.com:9000/spotify/playlist/" + id)
 			.then(res => res.json())
-			.then(res => console.log(res))
+			.then(res => this.setState({selectedPlaylist: res}))
 			.catch(err => console.log(err));
 	}
 
+	// defines how component is rendered to screen
 	render() {
 			return (
 				<div className="App">
 					<header className="App-header">
-						<img src={logo} className="App-logo" alt="logo" />
 						<h1 className="App-title">Welcome to React</h1>
 					</header>
 			<button onClick={this.getPlaylistData}>{this.state.username}</button>
