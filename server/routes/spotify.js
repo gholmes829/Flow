@@ -15,6 +15,21 @@ var client_secret = '849cf7b45dd849ed97ec6990bb6896a6';
 var redirect_uri = 'http://catchthatflow.com:9000/spotify/callback/';
 var stateKey = 'spotify_auth_state';
 
+var userName = '';
+
+var getUserInfo = function() {
+	spotifyAPI.getUser().then(
+		function(data) {
+			console.log(data);
+			userName = data.name;
+			console.log(userName);
+		},
+		function(err) {
+			console.log(err);
+		}
+	);
+};
+
 var generateRandomString = function(length) {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -116,6 +131,8 @@ router.get('/callback', function(req, res) {
       }
     });
   }
+  getUserInfo();
+
 });
 
 router.get('/refresh_token', function(req, res) {

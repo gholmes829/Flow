@@ -8,11 +8,11 @@ class App extends Component {
         	this.state = { };
     	}
 
-	getPlaylist() {
-		console.log("Requesting playlist!");
-		fetch("http://catchthatflow.com:9000/spotify/playlist")
+	connectToSpotify() {
+		console.log("Requesting login!");
+		fetch("http://catchthatflow.com:9000/spotify/login")
 			.then(res => res.text())
-			.then(res => console.log(res))
+			.then(res => console.log(JSON.parse(res)))
 			.catch(err => err);
 	}
 
@@ -23,8 +23,8 @@ class App extends Component {
 						<img src={logo} className="App-logo" alt="logo" />
 						<h1 className="App-title">Welcome to React</h1>
 					</header>
-			<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
-			<button onClick={this.getPlaylist}>Playlist</button>
+			<a href="http://catchthatflow.com:9000/spotify/login">Login For Sure</a>
+			<button onClick={this.connectToSpotify}>Login</button>
 				</div>
 			);
 		}
