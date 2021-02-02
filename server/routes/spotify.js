@@ -1,14 +1,23 @@
 var express = require('express');
 var request = require('request');
 var querystring = require('querystring');
+var SpotifyWebApi = require('spotify-web-api-node');
 
 var router = express.Router();
 
 //Spotify API
+var spotifyAPI = new SpotifyWebApi();
+var access_token = '';
+var refresh_token = '';
+
 var client_id = 'c7cca4bb63634ddf8e6d205c9b23a7b6'; // Your client id
 var client_secret = '849cf7b45dd849ed97ec6990bb6896a6';
 var redirect_uri = 'http://catchthatflow.com:9000/spotify/callback/';
 var stateKey = 'spotify_auth_state';
+
+var username = '';
+var playlists = [];
+var profilePic = '';
 
 var generateRandomString = function(length) {
   var text = '';
@@ -19,6 +28,38 @@ var generateRandomString = function(length) {
   }
   return text;
 };
+
+router.get('/userData', function(req, res, next) {
+	console.log("Recieved user info request!");		
+	spotifyAPI.getUserPlaylists().then(
+		function(data) {
+			playlists = data.body.items;
+			var response = {
+				username: username,
+				profilePic: profilePic,
+				playlists: playlists
+			}
+			console.log(response);
+			res.send(response);
+		},
+		function(err) {
+			res.send(err);
+		}
+	);
+});
+
+router.get('/playlist/:id', function(req, res, next) {
+	console.log('Finding playlist...');
+	spotifyAPI.getPlaylist(req.params.id).then(
+		function(data) {
+			console.log("A Playlist!");
+			res.send(data.body);
+		},
+		function(err) {
+			res.send(err);
+		}
+	);	
+});
 
 router.get('/login', function(req, res, next) {
   var state = generateRandomString(16);
@@ -68,8 +109,9 @@ router.get('/callback', function(req, res) {
     };
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
-        var access_token = body.access_token,
-            refresh_token = body.refresh_token;
+        access_token = body.access_token;
+        refresh_token = body.refresh_token;
+	spotifyAPI.setAccessToken(access_token);
         var options = {
           url: 'https://api.spotify.com/v1/me',
           headers: { 'Authorization': 'Bearer ' + access_token },
@@ -78,7 +120,8 @@ router.get('/callback', function(req, res) {
 
         // using the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-          console.log(body);
+          username = body.display_name;
+	  profilePic = body.images.length === 0 ? []: [body.images[0].url];
         });
 
         // passing the token to the browser to make requests from there
