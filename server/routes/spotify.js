@@ -26,13 +26,13 @@ var generateRandomString = function(length) {
 };
 
 router.get('/playlist', function(req, res, next) {
-		
+		console.log("Recieved playlist request!");		
 		spotifyAPI.getUserPlaylists().then(
 			function(data) {
-				console.log(data);
+				res.send(data);
 			},
 			function(err) {
-				console.log(err);
+				res.send(err);
 			}
 		);
 });
