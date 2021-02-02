@@ -1,7 +1,7 @@
 var express = require('express');
 var request = require('request');
 var querystring = require('querystring');
-var spotify = require('spotify-web-api-node');
+var SpotifyWebApi = require('spotify-web-api-node');
 
 var router = express.Router();
 
@@ -35,8 +35,7 @@ router.get('/playlist', function(req, res, next) {
 				console.log(err);
 			}
 		);
-	}
-}
+});
 
 router.get('/login', function(req, res, next) {
   var state = generateRandomString(16);
