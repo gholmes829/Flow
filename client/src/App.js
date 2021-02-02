@@ -4,16 +4,50 @@ import './App.css';
 
 class App extends Component {
 	constructor(props) {
+		console.log("Constructing");
 		super(props);
-        	this.state = { };
+        	this.state = {
+			username: "Default",
+			profilePic: '',
+			playlists: [],
+			selectedPlaylist: '',
+		};
+	this.getPlaylistData = this.getPlaylistData.bind(this);
     	}
 
-	connectToSpotify() {
-		console.log("Requesting login!");
-		fetch("http://catchthatflow.com:9000/spotify/login")
-			.then(res => res.text())
-			.then(res => console.log(JSON.parse(res)))
-			.catch(err => err);
+	componentDidMount() {
+		console.log("Components mounted");
+		if (window.location.hash.includes("access_token")) {
+			this.getUserData();
+			window.location.hash = "login-success";
+		}
+	}
+
+	getUserData() {
+		console.log("Requesting user data");		
+		fetch("http://catchthatflow.com:9000/spotify/userData")
+			.then(res => res.json())
+			.then(res =>
+				this.setState({
+					username: res.username,
+					profilePic: res.profilePic,
+					playlists: res.playlists,
+				})
+			)
+			.then(res => console.log(this.state))
+			.catch(err => console.log(err));
+
+		//this.setState({...this.state, selectedPlaylist: this.state.playlists[0].id});
+	}
+
+	getPlaylistData() {
+		var id = this.state.playlists[0].id;
+		console.log("Selected playlist: " + id);
+		console.log("Requesting playlist tracks data");
+		fetch("http://catchthatflow.com:9000/spotify/playlist/" + id)
+			.then(res => res.json())
+			.then(res => console.log(res))
+			.catch(err => console.log(err));
 	}
 
 	render() {
@@ -23,8 +57,8 @@ class App extends Component {
 						<img src={logo} className="App-logo" alt="logo" />
 						<h1 className="App-title">Welcome to React</h1>
 					</header>
-			<a href="http://catchthatflow.com:9000/spotify/login">Login For Sure</a>
-			<button onClick={this.connectToSpotify}>Login</button>
+			<button onClick={this.getPlaylistData}>{this.state.username}</button>
+			<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
 				</div>
 			);
 		}
