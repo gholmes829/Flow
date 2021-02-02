@@ -24,7 +24,7 @@ class App extends Component {
 						<h1 className="App-title">Welcome to React</h1>
 					</header>
 			<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
-			<button onClick={getPlaylist}>Playlist</button>
+			<button onClick={this.getPlaylist}>Playlist</button>
 				</div>
 			);
 		}
