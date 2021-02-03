@@ -17,7 +17,24 @@ var stateKey = 'spotify_auth_state';
 
 var username = '';
 var playlists = [];
+var playlist = [];
 var profilePic = '';
+
+var sendSongs = function(id, res, size) {
+	var songData = {};
+	spotifyAPI.getAudioFeaturesForTrack(id, function(err, data) {
+		if (err) {
+			console.log("ERROR: " + err);
+		} else {
+			songData = data.body;
+			console.log(playlist.length);
+			playlist.push(songData);
+			if (playlist.length === size) {
+				res.send({"playlist": playlist});
+			}
+		}
+	});
+};
 
 router.get('/userData', function(req, res, next) {
 	console.log("Recieved user info request!");		
@@ -29,7 +46,7 @@ router.get('/userData', function(req, res, next) {
 				profilePic: profilePic,
 				playlists: playlists
 			}
-			console.log(response);
+			//console.log(response);
 			res.send(response);
 		},
 		function(err) {
@@ -40,15 +57,26 @@ router.get('/userData', function(req, res, next) {
 
 router.get('/playlist/:id', function(req, res, next) {
 	console.log('Finding playlist...');
+	playlist = [];
+	var songs;
+	var size;
 	spotifyAPI.getPlaylist(req.params.id).then(
 		function(data) {
 			console.log("A Playlist!");
-			res.send(data.body);
+			size = data.body.tracks.items.length;			
+			songs = data.body.tracks.items;
 		},
 		function(err) {
 			res.send(err);
 		}
-	);	
+	)
+	.then( function () {
+		songs.forEach(function (song) {
+			sendSongs(song.track.id, res, size);
+		});
+		//console.log("SENDING", playlist.length, size);
+		//res.send({"playlist": playlist});
+	});
 });
 
 router.get('/login', function(req, res, next) {

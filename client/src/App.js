@@ -11,7 +11,7 @@ class App extends Component {
 			selectedPlaylistId: '',
 			selectedPlaylist: []
 		};
-		
+
 		// bound methods
 		this.getPlaylistData = this.getPlaylistData.bind(this);
 	}
@@ -24,7 +24,7 @@ class App extends Component {
 	}
 
 	// get initial user data
-	getUserData() {		
+	getUserData() {	
 		fetch("http://catchthatflow.com:9000/spotify/userData")
 			.then(res => res.json())
 			.then(res =>
@@ -39,12 +39,11 @@ class App extends Component {
 
 	// get tracks from selected playlist
 	getPlaylistData() {
-		
 		var id = this.state.playlists[0].id;
-		console.log("ID: " + id);
 		fetch("http://catchthatflow.com:9000/spotify/playlist/" + id)
 			.then(res => res.json())
 			.then(res => this.setState({selectedPlaylist: res}))
+			.then(res => console.log(this.state.selectedPlaylist))
 			.catch(err => console.log(err));
 	}
 
@@ -55,8 +54,8 @@ class App extends Component {
 					<header className="App-header">
 						<h1 className="App-title">Welcome to React</h1>
 					</header>
-			<button onClick={this.getPlaylistData}>{this.state.username}</button>
 			<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
+			<button onClick={this.getPlaylistData}>{this.state.username}</button>
 				</div>
 			);
 		}
