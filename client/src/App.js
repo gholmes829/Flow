@@ -24,8 +24,7 @@ class App extends Component {
 	}
 
 	// get initial user data
-	getUserData() {
-		console.log("Requesting user data");		
+	getUserData() {		
 		fetch("http://catchthatflow.com:9000/spotify/userData")
 			.then(res => res.json())
 			.then(res =>
@@ -35,13 +34,16 @@ class App extends Component {
 					playlists: res.playlists,
 				})
 			)
+			.then(res => console.log(this.state))
 			.catch(err => console.log(err));
 	}
 
 	// get tracks from selected playlist
 	getPlaylistData() {
-		this.setState({selectedPlaylistId: this.state.playlists[0].id});
-		var id = this.selectedPlaylistId;
+		this.setState({selectedPlaylistId: this.state.playlists[0].id})
+		
+		var id = this.state.playlists[0].id;
+		console.log("ID: " + id);
 		fetch("http://catchthatflow.com:9000/spotify/playlist/" + id)
 			.then(res => res.json())
 			.then(res => this.setState({selectedPlaylist: res}))
