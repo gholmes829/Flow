@@ -34,13 +34,11 @@ class App extends Component {
 					playlists: res.playlists,
 				})
 			)
-			.then(res => console.log(this.state))
 			.catch(err => console.log(err));
 	}
 
 	// get tracks from selected playlist
 	getPlaylistData() {
-		this.setState({selectedPlaylistId: this.state.playlists[0].id})
 		
 		var id = this.state.playlists[0].id;
 		console.log("ID: " + id);
