@@ -38,8 +38,8 @@ class App extends Component {
 				})
 			console.log("Users playlists:");
 				this.state.playlists.forEach((playlist) => {console.log("Playlist: " + playlist)});
-			})
 			console.log("Selected playlist (not really): " + this.state.playlists);
+			})
 			.catch(err => console.log(err));
 	}
 
