@@ -59,19 +59,22 @@ class App extends Component {
 			return (
 				<div className="App">
 				
-				<div className="Column">
-					"Test 1"
-				</div>
+					<div>
+						"Test 1"
+						<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
+						<button onClick={this.getPlaylistData}>{this.state.username}</button>
+					</div>
+						
+					<div>
+						"Test 2.1"
+						<br>"Test 2.2"
+					</div>
 					
-				<div className="Column">
-					"Test 2"
-				</div>
-				
-				<div className="Column">
-					"Test 3"
-				</div>
-					<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
-					<button onClick={this.getPlaylistData}>{this.state.username}</button>
+					<div>
+						"Test 3.1"
+						<br>"Test 3.2"
+					</div>
+
 				</div>
 			);
 		}
