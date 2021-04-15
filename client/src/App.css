@@ -1,10 +1,9 @@
 html, body {
-  height: 100%;
+  height: auto;
   background-color: #1A1648;
 }
 
 .App {
-  height: 100%;
   margin: 3%;
 }
 
@@ -27,8 +26,4 @@ html, body {
   width: 50%;
   margin: 0 auto;
   padding: 3%;
-}
-
-#root {
-  height: 100%;
 }
