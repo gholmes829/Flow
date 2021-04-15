@@ -37,7 +37,7 @@ class App extends Component {
 					playlists: res.playlists,
 				})
 			console.log("Users playlists:");
-				this.state.playlists.forEach((playlist) => {console.log("Playlist: " + playlist)});
+				this.state.playlists.forEach((playlist) => {console.log("Playlist: " + JSON.stringify(playlist))});
 			console.log("Selected playlist (not really): " + this.state.playlists);
 			})
 			.catch(err => console.log(err));
