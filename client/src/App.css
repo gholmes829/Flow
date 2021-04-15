@@ -5,6 +5,7 @@
 }
 
 .Title {
+  align-content: center;
   flex-direction: row;
 }
 
