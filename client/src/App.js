@@ -37,8 +37,9 @@ class App extends Component {
 					playlists: res.playlists,
 				})
 			console.log("Users playlists:");
-			this.state.playlists.forEach((playlist) => {console.log("Playlist: " + playlist.name)});
+				this.state.playlists.forEach((playlist) => {console.log("Playlist: " + playlist)});
 			})
+			console.log("Selected playlist (not really): " + this.state.playlists);
 			.catch(err => console.log(err));
 	}
 
@@ -46,7 +47,6 @@ class App extends Component {
 	getPlaylistData() {
 		// just getting 1 song
 		let id = this.state.playlists[0].id;
-		console.log("Selected playlist (not really): " + this.state);
 		fetch("http://catchthatflow.com:9000/spotify/playlist/" + id)
 			.then(res => res.json())
 			.then(res => this.setState({selectedPlaylist: res}))
