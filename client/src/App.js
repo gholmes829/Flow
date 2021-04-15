@@ -8,6 +8,8 @@ class App extends Component {
 			username: "Default",
 			profilePic: '',
 			playlists: [],
+			selectedSong: '',
+			selectedSongId: '',
 			selectedPlaylistId: '',
 			selectedPlaylist: []
 		};

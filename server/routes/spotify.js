@@ -21,6 +21,8 @@ var playlist = [];
 var profilePic = '';
 
 var sendSongs = function(id, res, size) {
+	// gets audio 
+	// convert to promises?
 	var songData = {};
 	spotifyAPI.getAudioFeaturesForTrack(id, function(err, data) {
 		if (err) {
@@ -38,6 +40,7 @@ var sendSongs = function(id, res, size) {
 
 router.get('/userData', function(req, res, next) {
 	console.log("Recieved user info request!");		
+	// gets users playlists, sends username, profilePic, and playlists
 	spotifyAPI.getUserPlaylists().then(
 		function(data) {
 			playlists = data.body.items;
@@ -56,6 +59,7 @@ router.get('/userData', function(req, res, next) {
 });
 
 router.get('/playlist/:id', function(req, res, next) {
+	// sends multiple song data?
 	console.log('Finding playlist...');
 	playlist = [];
 	var songs;
@@ -71,7 +75,9 @@ router.get('/playlist/:id', function(req, res, next) {
 		}
 	)
 	.then( function () {
+		console.log("Entering send song loop...");
 		songs.forEach(function (song) {
+			console.log("Sending song from caller: " + song.track.name);
 			sendSongs(song.track.id, res, size);
 		});
 		//console.log("SENDING", playlist.length, size);
@@ -80,6 +86,7 @@ router.get('/playlist/:id', function(req, res, next) {
 });
 
 router.get('/login', function(req, res, next) {
+  // log in to account
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
   
@@ -100,6 +107,7 @@ router.get('/login', function(req, res, next) {
 
 
 router.get('/callback', function(req, res) {
+  // callback after logging in to spotify
   // requesting refresh and access tokens
   // after checking the state parameter
   var code = req.query.code || null;
