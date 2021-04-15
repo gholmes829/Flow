@@ -62,11 +62,13 @@ router.get('/playlist/:id', function(req, res, next) {
 	// sends multiple song data?
 	console.log('Finding playlist...');
 	playlist = [];
+	var size;
+	var songs;
 	spotifyAPI.getPlaylist(req.params.id).then(
 		function(data) {
 			console.log("A Playlist!");
-			let size = data.body.tracks.items.length;			
-			let songs = data.body.tracks.items;
+			size = data.body.tracks.items.length;			
+			songs = data.body.tracks.items;
 		},
 		function(err) {
 			res.send(err);
