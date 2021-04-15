@@ -36,7 +36,7 @@ class App extends Component {
 					profilePic: res.profilePic,
 					playlists: res.playlists,
 				})
-			console.log("Users playlists:");
+			//console.log("Users playlists:");
 			//this.state.playlists.forEach((playlist) => {console.log("Playlist: " + JSON.stringify(playlist))});
 			})
 			.catch(err => console.log(err));
@@ -50,7 +50,7 @@ class App extends Component {
 		fetch("http://catchthatflow.com:9000/spotify/playlist/" + id)
 			.then(res => res.json())
 			.then(res => this.setState({selectedPlaylist: res}))
-			.then(res => console.log(this.state.selectedPlaylist))
+			.then(res => console.log("Selected playlist: " + this.state.selectedPlaylist))
 			.catch(err => console.log(err));
 	}
 
@@ -58,6 +58,17 @@ class App extends Component {
 	render() {
 			return (
 				<div className="App">
+				<div>
+					"Test 1"
+				<\div>
+					
+				<div>
+					"Test 2"
+				<\div>
+				
+				<div>
+					"Test 3"
+				<\div>
 					<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
 					<button onClick={this.getPlaylistData}>{this.state.username}</button>
 				</div>
