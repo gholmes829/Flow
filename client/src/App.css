@@ -5,6 +5,7 @@ html, body {
 
 .App {
   height: 100%;
+  margin: 3%;
 }
 
 .Columns {
@@ -25,8 +26,7 @@ html, body {
   color: black;
   width: 50%;
   margin: 0 auto;
-  margin-top: 5%;
-  padding: 5%;
+  padding: 3%;
 }
 
 #root {
