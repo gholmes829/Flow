@@ -60,15 +60,15 @@ class App extends Component {
 				<div className="App">
 				<div>
 					"Test 1"
-				<\div>
+				</div>
 					
 				<div>
 					"Test 2"
-				<\div>
+				</div>
 				
 				<div>
 					"Test 3"
-				<\div>
+				</div>
 					<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
 					<button onClick={this.getPlaylistData}>{this.state.username}</button>
 				</div>
