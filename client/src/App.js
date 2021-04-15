@@ -67,12 +67,12 @@ class App extends Component {
 						
 					<div>
 						"Test 2.1"
-						<br>"Test 2.2"
+						<br/>"Test 2.2"
 					</div>
 					
 					<div>
 						"Test 3.1"
-						<br>"Test 3.2"
+						<br/>"Test 3.2"
 					</div>
 
 				</div>
