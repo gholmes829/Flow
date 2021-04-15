@@ -1,16 +1,21 @@
 .App {
   text-align: center;
   justify-content: space-around;
+  background-color: black;
 }
 
 .Columns {
   text-align: center;
   display: flex;
   justify-content: space-around;
+  margin: 10px;
+  background-color: red;
 }
 
 .Title {
   justify-content: center;
   flex-direction: row;
+  margin: 10px;
+  background-color: blue;
 }
 
