@@ -3,10 +3,7 @@ html, body {
 }
 
 .App {
-  text-align: center;
-  justify-content: space-around;
   background-color: black;
-  margin: 0 auto;
   height: 100%;
 }
 
@@ -24,10 +21,10 @@ html, body {
 
 .Title {
   text-align: center;
-  justify-content: center;
-  flex-direction: row;
   background-color: blue;
+  color: orange;
   width: 50%;
+  margin: 0 auto;
 }
 
 #root {
