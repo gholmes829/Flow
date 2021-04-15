@@ -46,7 +46,7 @@ class App extends Component {
 	getPlaylistData() {
 		// just getting 1 song
 		let id = this.state.playlists[0].id;
-		console.log("Selected playlist (not really): " + this.state.playlists[0].json());
+		console.log("Selected playlist (not really): " + this.state);
 		fetch("http://catchthatflow.com:9000/spotify/playlist/" + id)
 			.then(res => res.json())
 			.then(res => this.setState({selectedPlaylist: res}))
