@@ -11,12 +11,11 @@ html, body {
   text-align: center;
   display: flex;
   justify-content: space-around;
-  height: 100%;
 }
 
 .Column {
   background-color: #7D204C;
-  margin: 25px;
+  margin: 5%;
   padding: 10%;
 }
 
@@ -26,8 +25,8 @@ html, body {
   color: black;
   width: 50%;
   margin: 0 auto;
-  margin-top: 25px;
-  padding: 25px;
+  margin-top: 5%;
+  padding: 5%;
 }
 
 #root {
