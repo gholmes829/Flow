@@ -67,7 +67,7 @@ class App extends Component {
 						<div className="Column">
 							"Test 1"
 							<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
-							<button onClick={this.getPlaylistData}>{this.state.username}</button
+							<button onClick={this.getPlaylistData}>{this.state.username}</button>
 							{JSON.stringify(this.state.playlists)}
 						</div>
 							
