@@ -51,11 +51,8 @@ class App extends Component {
 	render() {
 			return (
 				<div className="App">
-					<header className="App-header">
-						<h1 className="App-title">Welcome to React</h1>
-					</header>
-			<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
-			<button onClick={this.getPlaylistData}>{this.state.username}</button>
+					<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
+					<button onClick={this.getPlaylistData}>{this.state.username}</button>
 				</div>
 			);
 		}
