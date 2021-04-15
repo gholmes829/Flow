@@ -4,6 +4,10 @@
   justify-content: space-around;
 }
 
+.Title {
+  justify-content: row;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
