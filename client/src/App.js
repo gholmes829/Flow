@@ -57,12 +57,12 @@ class App extends Component {
 	// defines how component is rendered to screen
 	render() {
 			return (
-				<>
+				<div className="App">
 					<div className="Title">
 						"Grant's Cool Website"
 					</div>
 					
-					<div className="App">
+					<div className="Columns">
 						
 						<div>
 							"Test 1"
@@ -81,7 +81,7 @@ class App extends Component {
 						</div>
 
 					</div>
-				</>
+				<div/>
 			);
 		}
 	}

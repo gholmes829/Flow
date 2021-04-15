@@ -1,5 +1,10 @@
 .App {
   text-align: center;
+  justify-content: space-around;
+}
+
+.Columns {
+  text-align: center;
   display: flex;
   justify-content: space-around;
 }
