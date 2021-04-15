@@ -57,10 +57,11 @@ class App extends Component {
 	// defines how component is rendered to screen
 	render() {
 			return (
+				<div className="Title">
+					"Grant's Cool Website"
+				</div>
+				
 				<div className="App">
-					<div className="Title">
-						"Grant's Cool Website"
-					</div>
 					
 					<div>
 						"Test 1"
