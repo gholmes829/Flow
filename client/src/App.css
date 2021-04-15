@@ -17,7 +17,8 @@ html, body {
 .Column {
   background-color: #7D204C;
   margin: 25px;
-  padding: 10%;
+  border: 7%;
+  padding: 3%;
 }
 
 .Title {
@@ -27,7 +28,8 @@ html, body {
   width: 50%;
   margin: 0 auto;
   margin-top: 25px;
-  padding: 25px;
+  border: 10px;
+  padding: 15px;
 }
 
 #root {
