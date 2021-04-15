@@ -46,7 +46,7 @@ class App extends Component {
 	getPlaylistData() {
 		// just getting 1 playlist for testing
 		let id = this.state.playlists[4].id;
-		//console.log("Selected playlist (not really): " + JSON.stringify(this.state.playlists[4]));
+		console.log("Selected playlist (not really): " + JSON.stringify(this.state.playlists[4]));
 		fetch("http://catchthatflow.com:9000/spotify/playlist/" + id)
 			.then(res => res.json())
 			.then(res => this.setState({selectedPlaylist: res}))
@@ -58,7 +58,10 @@ class App extends Component {
 	render() {
 			return (
 				<div className="App">
-				
+					<div>
+						"Grant's Cool Website"
+					</div>
+					
 					<div>
 						"Test 1"
 						<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
