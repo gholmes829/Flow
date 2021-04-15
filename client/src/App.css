@@ -1,9 +1,9 @@
 html, body {
   height: 100%;
+  background-color: #1A1648;
 }
 
 .App {
-  background-color: grey;
   height: 100%;
 }
 
@@ -11,21 +11,22 @@ html, body {
   text-align: center;
   display: flex;
   justify-content: space-around;
-
 }
 
 .Column {
-  background-color: rgb(100, 75, 75);
+  background-color: #7D204C;
   margin: 25px;
+  padding: 10px;
 }
 
 .Title {
   text-align: center;
-  background-color: rgb(200, 200, 255);
+  background-color: #7D204C;
   color: black;
   width: 50%;
   margin: 0 auto;
   margin-top: 25px;
+  padding: 10px;
 }
 
 #root {
