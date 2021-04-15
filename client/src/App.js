@@ -59,7 +59,7 @@ class App extends Component {
 			return (
 				<div className="App">
 					<div className="Title">
-						"Grant's Cool Website"
+						"Flow"
 					</div>
 					
 					<div className="Columns">

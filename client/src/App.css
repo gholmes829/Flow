@@ -11,12 +11,13 @@ html, body {
   text-align: center;
   display: flex;
   justify-content: space-around;
+  height: 100%;
 }
 
 .Column {
   background-color: #7D204C;
   margin: 25px;
-  padding: 10px;
+  padding: 10%;
 }
 
 .Title {
@@ -26,7 +27,7 @@ html, body {
   width: 50%;
   margin: 0 auto;
   margin-top: 25px;
-  padding: 10px;
+  padding: 25px;
 }
 
 #root {
