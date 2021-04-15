@@ -25,7 +25,6 @@ class App extends Component {
 		}
 	}
 
-	// get initial user data
 	getUserData() {	
 		// stores users profile name, profile picture, and playlists
 		fetch("http://catchthatflow.com:9000/spotify/userData")
@@ -36,8 +35,8 @@ class App extends Component {
 					profilePic: res.profilePic,
 					playlists: res.playlists,
 				})
-			//console.log("Users playlists:");
-			//this.state.playlists.forEach((playlist) => {console.log("Playlist: " + JSON.stringify(playlist))});
+			console.log("Users playlists:");
+			this.state.playlists.forEach(playlist => console.log(playlist));
 			})
 			.catch(err => console.log(err));
 	}
@@ -46,12 +45,14 @@ class App extends Component {
 	getPlaylistData() {
 		// just getting 1 playlist for testing
 		let id = this.state.playlists[4].id;
-		console.log("Selected playlist (not really): " + JSON.stringify(this.state.playlists[4]));
 		fetch("http://catchthatflow.com:9000/spotify/playlist/" + id)
-			.then(res => res.json())
-			.then(res => this.setState({selectedPlaylist: res}))
-			.then(res => console.log("Selected playlist: " + this.state.selectedPlaylist))
-			.catch(err => console.log(err));
+		.then(res => res.json())
+		.then(res => {
+			let playlist = res["playlist"]
+			playlist.forEach(song => console.log(song));
+			this.setState({selectedPlaylist: playlist});
+		})
+		.catch(err => console.log(err));
 	}
 
 	// defines how component is rendered to screen
@@ -68,7 +69,6 @@ class App extends Component {
 							"Test 1"
 							<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
 							<button onClick={this.getPlaylistData}>{this.state.username}</button>
-							{JSON.stringify(this.state.playlists)}
 						</div>
 							
 						<div className="Column">

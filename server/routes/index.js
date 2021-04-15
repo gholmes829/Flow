@@ -1,3 +1,7 @@
+/*
+Default route, reroutes to website.
+*/
+
 var express = require('express');
 var router = express.Router();
 

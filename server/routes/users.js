@@ -1,7 +1,9 @@
+/*
+Necessary to start server.
+*/
+
 var express = require('express');
 var router = express.Router();
-
-// is this used for anything?
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
