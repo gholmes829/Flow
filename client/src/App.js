@@ -30,15 +30,15 @@ class App extends Component {
 		// stores users profile name, profile picture, and playlists
 		fetch("http://catchthatflow.com:9000/spotify/userData")
 			.then(res => res.json())
-			.then(res =>
+			.then(res => {
 				this.setState({
 					username: res.username,
 					profilePic: res.profilePic,
 					playlists: res.playlists,
 				})
 			console.log("Users playlists:");
-			this.state.playlists.map((playlist) => {console.log(playlist.name)})
-			)
+			this.state.playlists.map((playlist) => {console.log("Playlist: " + playlist.name)});
+			})
 			.catch(err => console.log(err));
 	}
 
