@@ -3,7 +3,7 @@ html, body {
 }
 
 .App {
-  background-color: black;
+  background-color: grey;
   height: 100%;
 }
 
@@ -15,16 +15,17 @@ html, body {
 }
 
 .Column {
-  background-color: red;
+  background-color: rgb(100, 75, 75);
   margin: 25px;
 }
 
 .Title {
   text-align: center;
-  background-color: blue;
-  color: orange;
+  background-color: rgb(200, 200, 255);
+  color: black;
   width: 50%;
   margin: 0 auto;
+  margin-top: 25px;
 }
 
 #root {
