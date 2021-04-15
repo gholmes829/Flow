@@ -58,15 +58,16 @@ class App extends Component {
 	render() {
 			return (
 				<div className="App">
-				<div>
+				
+				<div className="Column">
 					"Test 1"
 				</div>
 					
-				<div>
+				<div className="Column">
 					"Test 2"
 				</div>
 				
-				<div>
+				<div className="Column">
 					"Test 3"
 				</div>
 					<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
