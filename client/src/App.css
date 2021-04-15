@@ -1,3 +1,7 @@
+html, body {
+  margin: auto;
+}
+
 .App {
   text-align: center;
   justify-content: space-around;
@@ -8,8 +12,12 @@
   text-align: center;
   display: flex;
   justify-content: space-around;
-  margin: 10px;
+
+}
+
+.Column {
   background-color: red;
+  margin: 10px;
 }
 
 .Title {

@@ -64,18 +64,18 @@ class App extends Component {
 					
 					<div className="Columns">
 						
-						<div>
+						<div className="Column">
 							"Test 1"
 							<a href="http://catchthatflow.com:9000/spotify/login">Login</a>
 							<button onClick={this.getPlaylistData}>{this.state.username}</button>
 						</div>
 							
-						<div>
+						<div className="Column">
 							"Test 2.1"
 							<br/>"Test 2.2"
 						</div>
 						
-						<div>
+						<div className="Column">
 							"Test 3.1"
 							<br/>"Test 3.2"
 						</div>
