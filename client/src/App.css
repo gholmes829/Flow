@@ -25,8 +25,10 @@ html, body {
   text-align: center;
   justify-content: center;
   flex-direction: row;
-  margin: 50px;
   background-color: blue;
   width: 50%;
 }
 
+#root {
+  height: 100%;
+}
