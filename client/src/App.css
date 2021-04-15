@@ -1,5 +1,4 @@
 html, body {
-  margin: auto;
   height: 100%;
 }
 
@@ -23,6 +22,7 @@ html, body {
 }
 
 .Title {
+  text-align: center;
   justify-content: center;
   flex-direction: row;
   margin: 50px;
