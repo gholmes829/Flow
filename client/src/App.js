@@ -27,6 +27,7 @@ class App extends Component {
 
 	// get initial user data
 	getUserData() {	
+		// stores users profile name, profile picture, and playlists
 		fetch("http://catchthatflow.com:9000/spotify/userData")
 			.then(res => res.json())
 			.then(res =>
@@ -35,13 +36,15 @@ class App extends Component {
 					profilePic: res.profilePic,
 					playlists: res.playlists,
 				})
+			console.log("Users playlists:");
+			this.state.playlists.map((playlist) => {console.log(playlist.name)})
 			)
 			.catch(err => console.log(err));
 	}
 
 	// get tracks from selected playlist
 	getPlaylistData() {
-		var id = this.state.playlists[0].id;
+		let id = this.state.playlists[0].id;
 		fetch("http://catchthatflow.com:9000/spotify/playlist/" + id)
 			.then(res => res.json())
 			.then(res => this.setState({selectedPlaylist: res}))
