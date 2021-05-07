@@ -1,29 +1,109 @@
 html, body {
-  height: auto;
   background-color: #1A1648;
+  font-family: Consolas, Monaco, 'Andale Mono', monospace;
+  letter-spacing: 0.05em;
+  font-weight: bold;
+  overflow-y: hidden;
 }
 
 .App {
   margin: 3%;
+  margin-top: 1%;
 }
 
 .Columns {
   text-align: center;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .Column {
   background-color: #7D204C;
-  margin: 5%;
-  padding: 10%;
+  padding: 2%;
+  padding-top: 1%;
+  margin-top: 2%;
+  width: 27%;
+  border-radius: 15px;
 }
 
 .Title {
   text-align: center;
   background-color: #7D204C;
   color: black;
-  width: 50%;
-  margin: 0 auto;
+  margin: auto;
+  padding: 1%;
+  border-radius: 15px;
+}
+
+.TitleWord {
+    margin: auto;
+    background-color: white;
+    display: inline-block;
+    padding: 0.5%;
+}
+
+.Items {
   padding: 3%;
+  float: left;
+  margin: auto;
+  display: block;
+  background: None;
+  width: 100%;
+}
+
+.Playlists {
+  height: 35%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  border: solid black;
+  margin-top: 5%;
+}
+
+.ProfilePic {
+  margin: 5%;
+  width: 75px;
+  height: auto;
+  border: solid black;
+  border-radius: 100%;
+  clip-path: circle(75%);
+}
+
+.Text {
+  background-color: white;
+  padding: 3%;
+  margin-top: 5%;
+}
+
+.Selectable {
+  display: block;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ToggleLog {
+    display: block;
+    margin: auto;
+}
+
+.ImgContainer {
+    
+}
+
+.PlaySong {
+    margin-top: 5%;
+}
+
+button {
+  background-color: white;
+  overflow: hidden;
+  font-family: Consolas, Monaco, 'Andale Mono', monospace;
+  letter-spacing: 0.08em;
+  font-weight: bold;
+  border: 1px solid #204a61;
+  margin-top: 2%;
+  padding: 4%;
+  cursor: pointer;
+  border-radius: 10px 10px 10px 10px;
+  box-shadow: 0 0 5px rgba(5, 5, 5, 5);
 }
