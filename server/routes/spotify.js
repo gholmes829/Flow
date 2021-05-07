@@ -16,7 +16,7 @@ var refresh_token = '';
 
 // IDs
 var client_id = 'c7cca4bb63634ddf8e6d205c9b23a7b6'; // Your client id
-var client_secret = '849cf7b45dd849ed97ec6990bb6896a6';
+var client_secret = '';
 var redirect_uri = 'http://catchthatflow.com:9000/spotify/callback/';
 var stateKey = 'spotify_auth_state';
 
