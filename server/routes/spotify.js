@@ -11,7 +11,6 @@ var router = express.Router();
 
 // Spotify API
 var spotifyAPI = new SpotifyWebApi();
-var access_token = '';
 var refresh_token = '';
 
 // IDs
@@ -37,10 +36,12 @@ var getSongData = function(song, features, playlistID) {
 	};
 };
 
-router.get('/makePlaylist/:id-name', function(req, res, next) {
+router.get('/makePlaylist/:id-name-token', function(req, res, next) {
 	// Create a private playlist
 	let id = req.params["id"];
 	let name = req.params["name"];
+    let access_token = req.params["token"];
+    spotifyAPI.setAccessToken(access_token);
 	spotifyApi.createPlaylist(name, { 'description': 'Flow generated playlist', 'public': true })  // change this to private?
 	.then(function(data) {
 		console.log('Created playlist!');
@@ -49,8 +50,10 @@ router.get('/makePlaylist/:id-name', function(req, res, next) {
 	});
 });
 
-router.get('/addTracksToPlaylist/:playlistID-:tracks(spotify:track:*((-spotify:track:*)+)?)', function(req, res, next) {
+router.get('/addTracksToPlaylist/:playlistID-:tracks(spotify:track:*((-spotify:track:*)+)?)-token', function(req, res, next) {
 	let playlistID = req.params["playlistID"];
+    let access_token = req.params["token"];
+    spotifyAPI.setAccessToken(access_token);
 	let tracks = req.params.tracks.split('-');  // I sure hope the regex works...
 	spotifyApi.addTracksToPlaylist(playlistID, tracks)
 	.then(function(data) {
@@ -61,10 +64,12 @@ router.get('/addTracksToPlaylist/:playlistID-:tracks(spotify:track:*((-spotify:t
 });
 
 // maybe don't include this one...
-router.get('/removeTrackFromPlaylist/:playlistID-songURI', function(req, res, next) {
+router.get('/removeTrackFromPlaylist/:playlistID-songURI-token', function(req, res, next) {
 	// Remove all occurrence of a track
 	let playlistID = req.params["playlistID"];
 	let songURI = req.params["songURI"];
+    let access_token = req.params["token"];
+    spotifyAPI.setAccessToken(access_token);
 	var tracks = [{ uri : songURI }];
 	var options = {} // does this work?
 	//var options = { snapshot_id : "0wD+DKCUxiSR/WY8lF3fiCTb7Z8X4ifTUtqn8rO82O4Mvi5wsX8BsLj7IbIpLVM9" };
@@ -76,8 +81,10 @@ router.get('/removeTrackFromPlaylist/:playlistID-songURI', function(req, res, ne
 	});
 });
 
-router.get('/userData', function(req, res, next) {	
+router.get('/userData/:token', function(req, res, next) {	
 	// gets users playlists, sends username, profilePic, and playlists
+    let access_token = req.params["token"];
+    spotifyAPI.setAccessToken(access_token);
 	spotifyAPI.getUserPlaylists()
 	.then(playlists => {
 		//data.body.items.forEach(playlist => {playlists[playlist.id] = playlist.name});
@@ -93,7 +100,9 @@ router.get('/userData', function(req, res, next) {
 	});
 });
 
-router.get('/userPlaylists', function(req, res, next) {
+router.get('/userPlaylists/:token', function(req, res, next) {
+    let access_token = req.params["token"];
+    spotifyAPI.setAccessToken(access_token);
 	spotifyAPI.getUserPlaylists()
 	.then(playlists => {
 		res.send({
@@ -106,7 +115,9 @@ router.get('/userPlaylists', function(req, res, next) {
 	});
 });
 
-router.get('/songFeatures/:id', function(req, res, next) {
+router.get('/songFeatures/:id/:token', function(req, res, next) {
+    let access_token = req.params["token"];
+    spotifyAPI.setAccessToken(access_token);
 	let songID = req.params.id;
 	spotifyAPI.getAudioFeaturesForTrack(songID)
 	.then(features =>
@@ -117,14 +128,17 @@ router.get('/songFeatures/:id', function(req, res, next) {
 	});
 });
 
-router.get('/playlist/:id', function(req, res, next) {
+router.get('/playlist/:id/:token', function(req, res, next) {
 	// takes in id of playlist, returns list of songs information
-	let albumID = req.params.id;
+	let playlistID = req.params.id;
+    console.log("Playlist ID: " + playlistID);
+    let access_token = req.params["token"];
+    spotifyAPI.setAccessToken(access_token);
 	spotifyAPI.getPlaylist(req.params.id)  // get playlist info
 	.then(data => {
 		let songs = data.body.tracks.items;  // list of songs in playlist
 		Promise.all(data.body.tracks.items.map(song => spotifyAPI.getAudioFeaturesForTrack(song.track.id)))  // get audio features
-		.then(songData => res.send({"playlist": songData.map((data, i) => getSongData(songs[i].track, data.body, albumID))}))  // refine and send data
+		.then(songData => res.send({"playlist": songData.map((data, i) => getSongData(songs[i].track, data.body, playlistID))}))  // refine and send data
 		.catch(err => {
 			console.log("Error: " + err);
 			res.send(err);
@@ -139,8 +153,10 @@ router.get('/playlist/:id', function(req, res, next) {
 router.get('/logout', function(req, res, next) {
     username = '';
     profilePic = '';
-    access_token = '';
     refresh_token = '';
+    spotifyAPI.setAccessToken('');
+
+    spotifyAPI = new SpotifyWebApi();
     res.send("Success!");
 });
 
@@ -191,7 +207,7 @@ router.get('/callback', function(req, res) {
 		};
 		request.post(authOptions, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
-				access_token = body.access_token;
+				let access_token = body.access_token;
 				refresh_token = body.refresh_token;
 				spotifyAPI.setAccessToken(access_token);
 				let options = {
@@ -205,7 +221,7 @@ router.get('/callback', function(req, res) {
 					profilePic = body.images.length === 0 ? []: [body.images[0].url];
 				});
 				// passing the token to the browser to make requests from there
-				res.redirect('http://catchthatflow.com/' + '#login-success');
+				res.redirect('http://catchthatflow.com/' + '#login-success-' + access_token);
 			}
 			else {
 				res.redirect('/#' +
@@ -231,8 +247,8 @@ router.get('/refresh_token', function(req, res) {
 
 	request.post(authOptions, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
-			access_token = body.access_token;
-			spotifyAPI.use(access_token);
+			let access_token = body.access_token;
+			spotifyAPI.setAccessToken(access_token);
 		}
 	});
 });
