@@ -5,12 +5,13 @@ class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			username: "Default",
+			username: "Guest",
 			profilePic: '',
 			playlists: [],
 			selectedSong: '',
 			selectedPlaylist: [],
             playlistsLoaded: false,
+            selectedPlaylistName: "",
             loggedIn: false,
 		};
         
@@ -19,7 +20,7 @@ class App extends Component {
 
 		// bound methods
 		this.getSongsFromPlaylist = this.getSongsFromPlaylist.bind(this);
-        this.logout = this.logout.bind(this);
+        this.changeUser = this.changeUser.bind(this);
 	}
 
 	// after components are mounted
@@ -32,21 +33,18 @@ class App extends Component {
 		}
 	}
     
-    logout() {
-        fetch("http://catchthatflow.com:9000/spotify/logout")
-        .then(res => {
-            this.setState({
-                username: "Default",
-                profilePic: '',
-                playlists: [],
-                selectedSong: '',
-                selectedPlaylist: [],
-                loggedIn: false,
-            });
-        })
-        .catch(err => console.log(err));
+    changeUser() {
+        this.setState({
+            username: "Guest",
+            profilePic: '',
+            playlists: [],
+            selectedSong: '',
+            selectedPlaylist: [],
+            selectedPlaylistName: "",
+            loggedIn: false,
+        });
         this.token = '';
-        window.location.hash = "logged-out";
+        window.location.href="http://catchthatflow.com:9000/spotify/login"
     }
 
 	getUserData() {	
@@ -61,21 +59,29 @@ class App extends Component {
             })
             //this.generatePlaylistInterface()
             //console.log("Users playlists:");
-            this.state.playlists.forEach(playlist => console.log(playlist));
+            //this.state.playlists.forEach(playlist => console.log(playlist));
         })
         .catch(err => console.log(err));
 	}
 
 	// get tracks from selected playlist
-	getSongsFromPlaylist(id) {
+	getSongsFromPlaylist(id, name) {
 		// just getting 1 playlist for testing
-		return fetch("http://catchthatflow.com:9000/spotify/playlist/" + id + "/" + this.token)
+		fetch("http://catchthatflow.com:9000/spotify/playlist/" + id + "/" + this.token)
 		.then(res => res.json())
 		.then(res => {
-            console.log(res);
-			let playlist = res["playlist"]
-			playlist.forEach(song => console.log(song));
-			this.setState({selectedPlaylist: playlist});
+            //console.log(res);
+			let playlist = res["playlist"];
+            if (playlist) {
+                this.setState({selectedPlaylist: playlist});
+                let music = document.getElementById("Music")
+                music.scrollTo(0, 0);
+                //console.log("Setting playlist name:" + playlist.name);
+                this.setState({selectedPlaylistName: name});
+            }
+            else {
+                alert("Error 423 from excess API requests. Please wait and try again!");
+            }
 		})
 	}
 
@@ -83,24 +89,19 @@ class App extends Component {
 	// use react router instead of a href??
 	// combine login and username logo??
 	render() {
-        let containerHeight = 0.3;
+        let containerHeight = 0.35;
+        let iframeURL = "https://open.spotify.com/embed/track/";
         
         return (
-            <div className="App">
+            <div className="App">      
                 <div className="Row">
-                    <div className="Header">
-                        <div className="Info" style={{"marginLeft": "4%"}}>Flow</div>
-                        <div className="Info">{this.state.loggedIn ? <button style={{"padding": "10%"}} onClick={this.logout}>Logout</button> : <button style={{"padding": "20%"}} onClick={() => {window.location.href="http://catchthatflow.com:9000/spotify/login"}}>Login</button>}</div>
-                        <div className="SubHeader">
-                            <div className="Info">Username: {this.state.username}</div>
-                            <div className="Info">{this.state.profilePic === "" ? <img className="ProfilePic" src="/assets/unknown.jpg" alt="Unknown Pic"></img>: <img className="ProfilePic" src={this.state.profilePic} alt="Profile Pic"></img>}</div>
-                        </div>
-                    </div>
+                    <div className="Title">Flow</div>
                 </div>
-                
+            
                 <div className="Columns">
+                
                     <div className="Column">
-                    <div className="Text">My Music</div>
+                    <div className="Text">{this.state.selectedPlaylistName !== "" ? "Playlist: " + this.state.selectedPlaylistName : "Music"}</div>
                         <div className="Items" id="Music" style={{height: containerHeight * window.screen.height}}>
                             {this.state.loggedIn ?
                                 <>
@@ -116,17 +117,12 @@ class App extends Component {
                                         }}>{song.name}</button>)}
                                         </>
                                     :    <>{this.state.playlists.map(playlist => <button className="Selectable" key={playlist.id} onClick = {() => {
-                                            this.getSongsFromPlaylist(playlist.id)
-                                            .then(res => {
-                                                let music = document.getElementById("Music")
-                                                music.scrollTo(0, 0)
-                                            })
-                                            .catch(err => alert("Error 423 from excess API requests. Please wait and try again!"));
+                                            this.getSongsFromPlaylist(playlist.id, playlist.name);
                                         }}>{playlist.name}</button>)}
                                         </>
                                     }
                                 </>
-                                : "Log in to view playlists..."
+                                : <><br></br>Log in to view playlists...</>
                              }
                         </div>
                         <div className="Navigator">
@@ -134,27 +130,33 @@ class App extends Component {
                                 this.setState({selectedSong: "", selectedPlaylist: []})
                                 let music = document.getElementById("Music")
                                 music.scrollTo(0, 0)
+                                this.setState({selectedPlaylistName: ""});
                                 }
                             }>Back</button>            
                         </div>
-                        <div className="PlaySong">
-                            <iframe title="Sample" src={this.state.selectedSong !== "" ? "https://open.spotify.com/embed/track/" + this.state.selectedSong.uri: ""} width="100%" height="80" frameBorder="0" style={{border: "solid black"}} allowtransparency="true" allow="encrypted-media"></iframe>
+                        <div className="FrameContainer">
+                            <iframe title="Sample" src={this.state.selectedSong !== "" ? iframeURL + this.state.selectedSong.uri : ""} width="100%" height="80" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
                         </div>
                     </div>
                     
                     <div className="Column">
-                    <div className="Text">Songs</div>
-                        <div className="Items" style={{height: containerHeight * window.screen.height}}>
-                            HI
+                        <div className="Text">User</div>
+                        <div className="Header">
+                            <div className="Info"><button style={{"padding": "4%"}} onClick={this.changeUser}>{!this.state.loggedIn ? "Login" : "Change User"}</button></div>
+                            <div className="Info">{this.state.username}</div>
+                            <div className="Info">
+
+                            {this.state.profilePic === ""
+                                ? <img className="ProfilePic" src="/assets/unknown.jpg" alt="Unknown Pic"></img>
+                                : <img className="ProfilePic" src={this.state.profilePic} alt="Profile Pic"></img>}</div>
+                        </div>
+                        <div className="Items" style={{height: "100%"}}>
                         </div>
                     </div>
                     
                     <div className="Column">
-                    <div className="Text">
-                        Results
-                    </div>
-                        <div className="Items" style={{height: "85%"}}>
-                        </div>
+                        <div className="Text">Analysis</div>
+                        <div className="Items" style={{height: "100%"}}></div>
                     </div>
 
                 </div>

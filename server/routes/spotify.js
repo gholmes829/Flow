@@ -153,14 +153,6 @@ router.get('/playlist/:id/:token', function(req, res, next) {
 	});
 });
 
-router.get('/logout', function(req, res, next) {
-    refresh_token = '';
-    spotifyAPI.setAccessToken('');
-
-    spotifyAPI = new SpotifyWebApi();
-    res.send("Success!");
-});
-
 router.get('/login', function(req, res, next) {
 	// log in to account
 	let state = generateRandomString(16);
