@@ -1,14 +1,56 @@
 html, body {
   background-color: #1A1648;
   font-family: Consolas, Monaco, 'Andale Mono', monospace;
-  letter-spacing: 0.05em;
   font-weight: bold;
-  overflow-y: hidden;
 }
 
 .App {
   margin: 3%;
   margin-top: 1%;
+  height: 100%;
+}
+
+.Row {
+  background-color: #7D204C;
+  padding: 1%;
+  border-radius: 15px;
+}
+
+.Header {
+  background-color: #cfd1d4;
+  padding: 0.5%;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: solid black;
+}
+
+.SubHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 4%;
+}
+ 
+.Info {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ProfilePic {
+  width: 30px;
+  height: auto;
+  border: solid black;
+  border-radius: 100%;
+}
+
+.ToggleLog {
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .Columns {
@@ -19,91 +61,63 @@ html, body {
 
 .Column {
   background-color: #7D204C;
-  padding: 2%;
+  padding: 1.5%;
   padding-top: 1%;
-  margin-top: 2%;
-  width: 27%;
+  margin-top: 1.5%;
+  width: 29%;
   border-radius: 15px;
-}
-
-.Title {
-  text-align: center;
-  background-color: #7D204C;
-  color: black;
-  margin: auto;
-  padding: 1%;
-  border-radius: 15px;
-}
-
-.TitleWord {
-    margin: auto;
-    background-color: white;
-    display: inline-block;
-    padding: 0.5%;
-}
-
-.Items {
-  padding: 3%;
-  float: left;
-  margin: auto;
-  display: block;
-  background: None;
-  width: 100%;
-}
-
-.Playlists {
-  height: 35%;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  border: solid black;
-  margin-top: 5%;
-}
-
-.ProfilePic {
-  margin: 5%;
-  width: 75px;
-  height: auto;
-  border: solid black;
-  border-radius: 100%;
-  clip-path: circle(75%);
 }
 
 .Text {
-  background-color: white;
-  padding: 3%;
-  margin-top: 5%;
+  background-color: #cfd1d4;
+  padding: 2%;
+  margin-top: 1%;
+  border: solid black;
+}
+
+.Items {
+  background-color: #cfd1d4;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: solid black;
+  margin-top: 4%;
 }
 
 .Selectable {
   display: block;
-  width: 80%;
+  width: 90%;
   margin-left: auto;
   margin-right: auto;
 }
 
-.ToggleLog {
-    display: block;
-    margin: auto;
-}
-
-.ImgContainer {
-    
-}
-
 .PlaySong {
-    margin-top: 5%;
+  margin-top: 4%;
+}
+
+.Navigator {
+  margin-top: 4%;
+  background-color: #cfd1d4;
+  border: solid black;
+}
+
+iframe {
+  background-color: #cfd1d4;
 }
 
 button {
   background-color: white;
   overflow: hidden;
   font-family: Consolas, Monaco, 'Andale Mono', monospace;
-  letter-spacing: 0.08em;
   font-weight: bold;
   border: 1px solid #204a61;
   margin-top: 2%;
-  padding: 4%;
+  margin-bottom: 2%;
+  padding: 2%;
   cursor: pointer;
-  border-radius: 10px 10px 10px 10px;
+  border-radius: 8px;
   box-shadow: 0 0 5px rgba(5, 5, 5, 5);
+}
+
+button:hover {
+  background-color: #B1B0B0;
 }
