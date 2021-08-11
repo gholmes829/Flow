@@ -35,7 +35,6 @@ const App = () => {
 
 	// get tracks from selected playlist
 	const getSongsFromPlaylist = (id, name) => {
-		// just getting 1 playlist for testing
 		fetch("http://catchthatflow.com:9000/spotify/playlist/" + id + "/" + token)
 		.then(res => res.json())
 		.then(res => {
@@ -56,26 +55,7 @@ const App = () => {
 	}
     
     useEffect(() => {
-        // dependency warning
-        const updateToken = () => {
-            let hash = window.location.hash;
-            if (hash.includes("success-")) {
-                console.log("Setting token")
-                setToken(hash.replace("#login-success-", ""));
-                window.location.hash = "#login-success";
-            }
-            else {
-                window.location.hash = "#sign-in";
-            }
-        }
-
-        updateToken()
-
-    }, [])
-
-    useEffect(() => {
-        // not working
-        const updateUserData = () => {
+        const fetchUserData = () => {
             console.log("Getting user data")
             // stores users profile name, profile picture, and playlists
             fetch("http://catchthatflow.com:9000/spotify/userData/" + token)
@@ -92,10 +72,22 @@ const App = () => {
             .catch(err => console.log(err));
         }
 
-        if (token != "") {
-            updateUserData()
+        const updateToken = () => {
+            let hash = window.location.hash;
+            if (hash.includes("success-")) {
+                console.log("Setting token")
+                setToken(hash.replace("#login-success-", ""));
+                window.location.hash = "#login-success";
+                fetchUserData()
+            }
+            else {
+                window.location.hash = "#sign-in";
+            }
         }
-    }, [token])
+
+        updateToken()
+
+    }, [])
     
     //maybe move these to a better place
     let containerHeight = 0.325;
