@@ -7,15 +7,15 @@ html, body {
 }
 
 .App {
-  margin: 1.5%;
-  margin-top: 0%;
+  margin: 3%;
+  margin-top: 1.5%;
   margin-bottom: 1%;
   height: 100%;
 }
 
 .Row {
   background-color: #7D204C;
-  padding: 1%;
+  padding: 0.75%;
   border-radius: 25px;
   margin: auto;
   margin-top: 1%;
@@ -27,7 +27,7 @@ html, body {
   margin: auto;
   background-color: #cfd1d4;
   border: solid black;
-  padding: 0.25%;
+  padding: 0.15%;
   font-size: x-large;
 }
 
@@ -52,11 +52,11 @@ html, body {
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: 29%;
+  width: 31%;
 }
 
 .ProfilePic {
-  width: 35px;
+  width: 40px;
   height: auto;
   border: solid black;
   border-radius: 100%;
@@ -79,12 +79,11 @@ html, body {
   background-color: #7D204C;
   padding: 1.5%;
   padding-top: 1%;
-  margin-top: 1.5%;
-  width: 29%;
+  margin-top: 2.85%;
+  width: 28%;
   border-radius: 25px;
   display: flex;
   flex-direction: column;
-
 }
 
 .Text {
@@ -92,6 +91,7 @@ html, body {
   padding: 2%;
   margin-top: 1%;
   border: solid black;
+  font-size: large;
 }
 
 .Items {
@@ -104,21 +104,41 @@ html, body {
 
 .Selectable {
   display: block;
-  width: 80%;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
   padding-top: 3%;
   padding-bottom: 3%;
+  border-radius: 0px;
+  margin: 0;
+  box-shadow: 0 0 0 0;
 }
 
 .PlaySong {
   margin-top: 4%;
 }
 
-.Navigator {
+.Controls {
   margin-top: 4%;
   background-color: #cfd1d4;
   border: solid black;
+}
+
+.Control {
+  margin-left: 3%;
+  margin-right: 3%;
+}
+
+.Unactive {
+  background-color: #8d8d8d;
+  cursor: default;
+  margin-left: 3%;
+  margin-right: 3%;
+  box-shadow: 0 0 3px rgba(5, 5, 5, 5);
+}
+
+.Unactive:hover {
+    background-color: #8d8d8d;
 }
 
 .FrameContainer {

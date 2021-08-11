@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./App.css";
+import "../App.css";
 
 class App extends Component {
 	constructor(props) {
@@ -26,11 +26,15 @@ class App extends Component {
 	// after components are mounted
 	componentDidMount() {
         let hash = window.location.hash;
-		if (hash.includes("success")) {
+		if (hash.includes("success-")) {
             this.token = hash.replace("#login-success-", "");
+            window.location.hash = "#login-success";
 			this.getUserData();
             this.setState({loggedIn: true})
 		}
+        else {
+            window.location.hash = "#sign-in";
+        }
 	}
     
     changeUser() {
@@ -81,6 +85,7 @@ class App extends Component {
             }
             else {
                 alert("Error 423 from excess API requests. Please wait and try again!");
+                console.log(res);
             }
 		})
 	}
@@ -89,7 +94,7 @@ class App extends Component {
 	// use react router instead of a href??
 	// combine login and username logo??
 	render() {
-        let containerHeight = 0.35;
+        let containerHeight = 0.325;
         let iframeURL = "https://open.spotify.com/embed/track/";
         
         return (
@@ -125,15 +130,40 @@ class App extends Component {
                                 : <><br></br>Log in to view playlists...</>
                              }
                         </div>
-                        <div className="Navigator">
-                            <button onClick={() => {
+                        
+
+                        <div className="Controls">
+                        
+                                    
+                        
+                            {this.state.selectedPlaylist.length === 0 ? 
+                            <>
+                            
+                            <button className="Unactive"
+                            >Optimize</button> 
+                            <button className="Unactive"
+                            >Back</button>   
+                           
+                            </>
+                            
+                            : <> 
+                            <button className="Control" onClick={() => {
+                                    // do stuff
+                                }
+                            }>Optimize</button> 
+                            
+                            <button className="Control" onClick={() => {
                                 this.setState({selectedSong: "", selectedPlaylist: []})
                                 let music = document.getElementById("Music")
                                 music.scrollTo(0, 0)
                                 this.setState({selectedPlaylistName: ""});
                                 }
-                            }>Back</button>            
+                            }>Back</button> 
+                            </>
+                            }
                         </div>
+                        
+                        
                         <div className="FrameContainer">
                             <iframe title="Sample" src={this.state.selectedSong !== "" ? iframeURL + this.state.selectedSong.uri : ""} width="100%" height="80" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
                         </div>
@@ -142,7 +172,7 @@ class App extends Component {
                     <div className="Column">
                         <div className="Text">User</div>
                         <div className="Header">
-                            <div className="Info"><button style={{"padding": "4%"}} onClick={this.changeUser}>{!this.state.loggedIn ? "Login" : "Change User"}</button></div>
+                            <div className="Info"><button style={{"padding": "4%", "margin": "5%"}} onClick={this.changeUser}>{!this.state.loggedIn ? "Login" : "Change User"}</button></div>
                             <div className="Info">{this.state.username}</div>
                             <div className="Info">
 
@@ -155,7 +185,7 @@ class App extends Component {
                     </div>
                     
                     <div className="Column">
-                        <div className="Text">Analysis</div>
+                        <div className="Text">Results</div>
                         <div className="Items" style={{height: "100%"}}></div>
                     </div>
 

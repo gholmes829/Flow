@@ -14,8 +14,8 @@ var spotifyAPI = new SpotifyWebApi();
 var refresh_token = '';
 
 // IDs
-var client_id = 'c7cca4bb63634ddf8e6d205c9b23a7b6'; // Your client id
-var client_secret = '';
+var client_id = 'c7cca4bb63634ddf8e6d205c9b23a7b6';
+var client_secret = 'b860163f833644eebb3f1065aa8048e2';  // old version, doesn't do anything now
 var redirect_uri = 'http://catchthatflow.com:9000/spotify/callback/';
 var stateKey = 'spotify_auth_state';
 
@@ -29,6 +29,35 @@ var getSongData = function(song, features, playlistID) {
 		album: song.album.name,
 		uri: song.uri.replace("spotify:track:", ""),
 	};
+};
+
+
+var getAudioFeatures = function(id, retries=25) {
+    //console.log("GETTING FEATURES: " + id);
+    return new Promise((resolve, reject) => {
+        let features = [];
+        if (!retries) {
+            console.log("Rejecting!!!");
+            reject(null);
+        }
+        //console.log(id);
+        spotifyAPI.getAudioFeaturesForTrack(id)
+        .then(res => {
+            //console.log("Complete!");
+            features = res;
+            resolve(features);
+        })
+        .catch(err => {
+           console.log("BIG ERROR: " + JSON.stringify(err));
+           console.log(retries + " " + (10.25 - retries));
+           let result = null;
+           setTimeout(() => {
+               getAudioFeatures(id, retries-1)
+               .then(res => resolve(res));
+            }, 100 * Math.min(5, 10.25 - retries));
+        });
+        
+    });
 };
 
 router.get('/makePlaylist/:id-name-token', function(req, res, next) {
@@ -140,7 +169,7 @@ router.get('/playlist/:id/:token', function(req, res, next) {
 	spotifyAPI.getPlaylist(req.params.id)  // get playlist info
 	.then(data => {
 		let songs = data.body.tracks.items;  // list of songs in playlist
-		Promise.all(data.body.tracks.items.map(song => spotifyAPI.getAudioFeaturesForTrack(song.track.id)))  // get audio features
+		Promise.all(data.body.tracks.items.map(song => getAudioFeatures(song.track.id)))  // get audio features
 		.then(songData => res.send({"playlist": songData.map((data, i) => getSongData(songs[i].track, data.body, playlistID))}))  // refine and send data
 		.catch(err => {
 			console.log("Error: " + err);
