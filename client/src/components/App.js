@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
 
+// TODO: make new refresh interval that checks expiration and refreshes when it gets close
+
 const App = () => {
     // state variables
     const [userObject, setUserObject] = useState({
@@ -12,11 +14,9 @@ const App = () => {
         selectedPlaylistName: "",
         loggedIn: false,
     })
+    
     const [token, setToken] = useState("")
     const [selectedButton, setSelectedButton] = useState("")
-
-    console.log(userObject)
-    console.log(token)
 
     const changeUser = () => {
         setUserObject({
@@ -28,7 +28,11 @@ const App = () => {
             selectedPlaylistName: "",
             loggedIn: false,
         });
-        setToken("")
+
+        if (token !== "") {
+            console.log("Setting token up top!")
+            setToken("")
+        }
         window.location.href="http://catchthatflow.com:9000/spotify/login"  // consider useHistory hook
     }
 
@@ -41,11 +45,11 @@ const App = () => {
             //console.log(res);
 			let playlist = res["playlist"];
             if (playlist) {
-                setUserObject({...userObject, selectedPlaylist: playlist});
+                console.log("Setting selected playlist...")
+                setUserObject({...userObject, selectedPlaylist: playlist, selectedPlaylistName: name});
                 let music = document.getElementById("Music")
                 music.scrollTo(0, 0);
-                //console.log("Setting playlist name:" + playlist.name);
-                setUserObject({...userObject, selectedPlaylistName: name});
+                console.log("Done setting selected playlist...")
             }
             else {
                 alert("Error 423 from excess API requests. Please wait and try again!");
@@ -55,6 +59,21 @@ const App = () => {
 	}
     
     useEffect(() => {
+        const updateToken = () => {
+            let hash = window.location.hash;
+            if (hash.includes("success-")) {
+                setToken(hash.replace("#login-success-", ""));
+                window.location.hash = "#login-success";
+            }
+            else {
+                window.location.hash = "#sign-in";
+            }
+        }
+
+        updateToken()
+    }, [])
+
+    useEffect(() => {
         const fetchUserData = () => {
             console.log("Getting user data")
             // stores users profile name, profile picture, and playlists
@@ -62,7 +81,9 @@ const App = () => {
             .then(res => res.json())
             .then(res => {
                 setUserObject({
-                    ...userObject, 
+                    selectedSong: "",
+                    selectedPlaylist: [],
+                    selectedPlaylistName: "",
                     username: res.username,
                     profilePic: res.profilePic,
                     playlists: res.playlists,
@@ -72,22 +93,10 @@ const App = () => {
             .catch(err => console.log(err));
         }
 
-        const updateToken = () => {
-            let hash = window.location.hash;
-            if (hash.includes("success-")) {
-                console.log("Setting token")
-                setToken(hash.replace("#login-success-", ""));
-                window.location.hash = "#login-success";
-                fetchUserData()
-            }
-            else {
-                window.location.hash = "#sign-in";
-            }
+        if (token !== "") {
+            fetchUserData()
         }
-
-        updateToken()
-
-    }, [])
+    }, [token])
     
     //maybe move these to a better place
     let containerHeight = 0.325;
