@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
+import Header from "./Header"
+import Column from "./Column";
 import "../App.css";
+
 
 // TODO: make new refresh interval that checks expiration and refreshes when it gets close
 
@@ -35,7 +38,6 @@ const App = () => {
         }
         window.location.href="http://catchthatflow.com:9000/spotify/login"  // consider useHistory hook
     }
-
 
 	// get tracks from selected playlist
 	const getSongsFromPlaylist = (id, name) => {
@@ -108,14 +110,12 @@ const App = () => {
 
     return (
         <div className="App">      
-            <div className="Row">
-                <div className="Title">Flow</div>
-            </div>
+            <Header/>
         
             <div className="Columns">
-            
-                <div className="Column">
-                <div className="Text">{userObject.selectedPlaylistName !== "" ? "Playlist: " + userObject.selectedPlaylistName : "Music"}</div>
+                <Column elements = {[
+                    <div className="Text">{userObject.selectedPlaylistName !== "" ? "Playlist: " + userObject.selectedPlaylistName : "Music"}</div>,
+
                     <div className="Items" id="Music" style={{height: containerHeight * window.screen.height}}>
                         {userObject.loggedIn ?
                             <>
@@ -138,9 +138,8 @@ const App = () => {
                             </>
                             : <><br></br>Log in to view playlists...</>
                             }
-                    </div>
+                    </div>,
                     
-
                     <div className="Controls">
                     
                                 
@@ -170,16 +169,15 @@ const App = () => {
                         }>Back</button> 
                         </>
                         }
-                    </div>
-                    
-                    
+                    </div>,
+
                     <div className="FrameContainer">
                         <iframe title="Sample" src={userObject.selectedSong !== "" ? iframeURL + userObject.selectedSong.uri : ""} width="100%" height="80" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
                     </div>
-                </div>
+                ]}/>
                 
-                <div className="Column">
-                    <div className="Text">User</div>
+                <Column elements = {[
+                    <div className="Text">User</div>,
                     <div className="Header">
                         <div className="Info"><button style={{"padding": "4%", "margin": "5%"}} onClick={changeUser}>{!userObject.loggedIn ? "Login" : "Change User"}</button></div>
                         <div className="Info">{userObject.username}</div>
@@ -188,15 +186,15 @@ const App = () => {
                         {userObject.profilePic === ""
                             ? <img className="ProfilePic" src="/assets/unknown.jpg" alt="Unknown Pic"></img>
                             : <img className="ProfilePic" src={userObject.profilePic} alt="Profile Pic"></img>}</div>
-                    </div>
-                    <div className="Items" style={{height: "100%"}}>
-                    </div>
-                </div>
-                
-                <div className="Column">
-                    <div className="Text">Results</div>
+                    </div>,
                     <div className="Items" style={{height: "100%"}}></div>
-                </div>
+                ]}/>
+                
+                <Column elements = {[ 
+                    <div className="Text">Results</div>,
+	                <div className="Items" style={{height: "100%"}}></div>
+                ]}/>
+
 
             </div>
         </div>
