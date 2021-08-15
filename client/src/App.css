@@ -7,38 +7,66 @@ html, body {
 }
 
 .App {
-  margin: 3%;
-  margin-top: 1.5%;
+  margin: 2.5%;
+  margin-top: 1%;
   margin-bottom: 1%;
   height: 100%;
 }
 
 .Row {
   background-color: #7D204C;
-  padding: 0.75%;
+  padding: 1.5%;
+  padding-top: 0.75%;
+  padding-bottom: 0.75%;
   border-radius: 25px;
   margin: auto;
   margin-top: 1%;
   text-align: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.RowItem {
+  display: flex;
+  width: 30%;
+  justify-content: center;
 }
 
 .Title {
-  width: 15%;
-  margin: auto;
+  width: 50%;
+  margin-top: 0%;
+  margin-bottom: 0%;
   background-color: #cfd1d4;
   border: solid black;
-  padding: 0.15%;
-  font-size: x-large;
+  padding: 0.5%;
+  font-size: xx-large;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.Header {
+.Source {
   background-color: #cfd1d4;
   border: solid black;
-  padding: 1.5%;
+  padding: 0.5%;
+  width: 50%;
+  margin-top: 0%;
+  margin-bottom: 0%;
+  font-size: medium;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Login {
+  background-color: #cfd1d4;
+  border: solid black;
+  padding: 0.25%;
+  width: 80%;
+  font-size: medium;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 4%;
 }
 
 .SubHeader {
@@ -46,8 +74,11 @@ html, body {
   justify-content: space-between;
   margin-right: 4%;
 }
- 
+
 .Info {
+  padding: 2.5%;
+  padding-left: 5%;
+  padding-right: 5%;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -55,8 +86,14 @@ html, body {
   width: 31%;
 }
 
+.HeaderButton {
+  padding: 10%;
+  margin: 5%;
+  white-space: nowrap;
+}
+
 .ProfilePic {
-  width: 40px;
+  width: 30px;
   height: auto;
   border: solid black;
   border-radius: 100%;
@@ -73,13 +110,14 @@ html, body {
   text-align: center;
   display: flex;
   justify-content: space-between;
+  height: 100%;
 }
 
 .Column {
   background-color: #7D204C;
   padding: 1.5%;
   padding-top: 1%;
-  margin-top: 2.85%;
+  margin-top: 2%;
   width: 28%;
   border-radius: 25px;
   display: flex;
@@ -88,10 +126,11 @@ html, body {
 
 .Text {
   background-color: #cfd1d4;
-  padding: 2%;
-  margin-top: 1%;
+  padding: 0.25em;
+  margin-top: 0.125em;
+  margin-bottom: 0.25em;
   border: solid black;
-  font-size: large;
+  font-size: x-large;
 }
 
 .Items {
@@ -99,7 +138,6 @@ html, body {
   overflow-y: auto;
   overflow-x: hidden;
   border: solid black;
-  margin-top: 4%;
 }
 
 .Selectable {
@@ -107,8 +145,8 @@ html, body {
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding-top: 3%;
-  padding-bottom: 3%;
+  padding-top: 2.5%;
+  padding-bottom: 2.5%;
   border-radius: 0px;
   margin: 0;
   box-shadow: 0 0 0 0;
@@ -119,7 +157,7 @@ html, body {
 }
 
 .Controls {
-  margin-top: 4%;
+  margin-top: 2.5%;
   background-color: #cfd1d4;
   border: solid black;
 }
@@ -131,7 +169,6 @@ html, body {
 
 .Unactive {
   background-color: #8d8d8d;
-  cursor: default;
   margin-left: 3%;
   margin-right: 3%;
   box-shadow: 0 0 3px rgba(5, 5, 5, 5);
@@ -144,7 +181,7 @@ html, body {
 .FrameContainer {
   overflow: hidden;
   border: solid black;
-  margin-top: 4%;
+  margin-top: 2.5%;
   display: flex;
 }
 

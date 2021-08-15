@@ -6,13 +6,18 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "bezier-js": "^4.1.1",
+    "npm-force-resolutions": "0.0.10",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-force-graph-2d": "^1.23.8",
+    "react-force-graph-3d": "^1.21.10",
     "react-scripts": "^4.0.3",
     "serve": "^11.3.2",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -36,5 +41,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "resolutions": {
+    "bezier-js": "4.0.3"
   }
 }

@@ -1,9 +1,11 @@
 /*
-Manages Spotify API.
+Manages Spotify API and service requests.
 */
 
 var express = require('express');
 var request = require('request');
+var path = require('path');
+var pythonShell = require('python-shell')
 var querystring = require('querystring');
 var SpotifyWebApi = require('spotify-web-api-node');
 require('dotenv').config();
@@ -60,6 +62,27 @@ var getAudioFeatures = function(id, retries=25) {
     });
 };
 
+router.post('/analyzePlaylist', function(req, res) {
+	let song_data = req.body
+	console.log("Spawning child...")
+	target_path = path.join(path.resolve(__dirname, '..'), 'services', 'analysis.py')
+	let song_scores
+	let pyshell = new pythonShell.PythonShell(target_path)
+	pyshell.send(JSON.stringify(song_data))
+	pyshell.on('message', function (message) {
+		// received a message sent from the Python script (a simple "print" statement)
+		song_scores = message
+	})
+
+	pyshell.end(function (err, code, signal) {
+		if (err) throw err;
+		console.log('The exit code was: ' + code);
+		console.log('The exit signal was: ' + signal);
+		res.send(song_scores)
+	})
+
+});
+
 router.get('/makePlaylist/:id-name-token', function(req, res, next) {
 	// Create a private playlist
 	let id = req.params["id"];
@@ -68,7 +91,7 @@ router.get('/makePlaylist/:id-name-token', function(req, res, next) {
     spotifyAPI.setAccessToken(access_token);
 	spotifyApi.createPlaylist(name, { 'description': 'Flow generated playlist', 'public': true })  // change this to private?
 	.then(function(data) {
-		console.log('Created playlist!');
+		res.send('Created playlist!');
 	}, function(err) {
 		console.log('Error: ', err);
 	});
