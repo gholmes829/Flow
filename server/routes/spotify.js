@@ -1,23 +1,25 @@
 /*
-Manages Spotify API.
+Manages Spotify API and service requests.
 */
 
 var express = require('express');
 var request = require('request');
+var path = require('path');
+var pythonShell = require('python-shell')
 var querystring = require('querystring');
 var SpotifyWebApi = require('spotify-web-api-node');
+require('dotenv').config();
 
 var router = express.Router();
 
 // Spotify API
 var spotifyAPI = new SpotifyWebApi();
-var refresh_token = '';
 
 // IDs
-var client_id = 'c7cca4bb63634ddf8e6d205c9b23a7b6';
-var client_secret = 'b860163f833644eebb3f1065aa8048e2';  // old version, doesn't do anything now
-var redirect_uri = 'http://catchthatflow.com:9000/spotify/callback/';
-var stateKey = 'spotify_auth_state';
+const client_id = 'c7cca4bb63634ddf8e6d205c9b23a7b6';
+const client_secret = process.env.CLIENT_SECRET;
+const redirect_uri = 'http://catchthatflow.com:9000/spotify/callback/';
+const stateKey = 'spotify_auth_state';
 
 var getSongData = function(song, features, playlistID) {
 	// gets audio features + any additional data from song
@@ -48,17 +50,38 @@ var getAudioFeatures = function(id, retries=25) {
             resolve(features);
         })
         .catch(err => {
-           console.log("BIG ERROR: " + JSON.stringify(err));
-           console.log(retries + " " + (10.25 - retries));
-           let result = null;
-           setTimeout(() => {
-               getAudioFeatures(id, retries-1)
-               .then(res => resolve(res));
+			console.log("BIG ERROR: " + JSON.stringify(err));
+			console.log(retries + " " + (10.25 - retries));
+			let result = null;
+			setTimeout(() => {
+				getAudioFeatures(id, retries-1)
+				.then(res => resolve(res));
             }, 100 * Math.min(5, 10.25 - retries));
         });
         
     });
 };
+
+router.post('/analyzePlaylist', function(req, res) {
+	let song_data = req.body
+	console.log("Spawning child...")
+	target_path = path.join(path.resolve(__dirname, '..'), 'services', 'analysis.py')
+	let song_scores
+	let pyshell = new pythonShell.PythonShell(target_path)
+	pyshell.send(JSON.stringify(song_data))
+	pyshell.on('message', function (message) {
+		// received a message sent from the Python script (a simple "print" statement)
+		song_scores = message
+	})
+
+	pyshell.end(function (err, code, signal) {
+		if (err) throw err;
+		console.log('The exit code was: ' + code);
+		console.log('The exit signal was: ' + signal);
+		res.send(song_scores)
+	})
+
+});
 
 router.get('/makePlaylist/:id-name-token', function(req, res, next) {
 	// Create a private playlist
@@ -68,7 +91,7 @@ router.get('/makePlaylist/:id-name-token', function(req, res, next) {
     spotifyAPI.setAccessToken(access_token);
 	spotifyApi.createPlaylist(name, { 'description': 'Flow generated playlist', 'public': true })  // change this to private?
 	.then(function(data) {
-		console.log('Created playlist!');
+		res.send('Created playlist!');
 	}, function(err) {
 		console.log('Error: ', err);
 	});
@@ -204,17 +227,17 @@ router.get('/login', function(req, res, next) {
 
 router.get('/callback', function(req, res) {
 	// callback after logging in to spotify, requesting refresh and access tokens after checking the state parameter
-	let state = req.query.state || null;
-	let storedState = req.cookies ? req.cookies[stateKey] : null;
+	let state = req.query.state || null;  // grab state if present else set to null
+	let storedState = req.cookies ? req.cookies[stateKey] : null;  // grab cookies if present else set to null
 
-	if (state === null || state !== storedState) {
+	if (state === null || state !== storedState) {  // validate state
 		res.redirect('/#' +
 			querystring.stringify({
 				error: 'state_mismatch'
 			}));
 	}
-	else {
-		res.clearCookie(stateKey);
+	else {  // state matches
+		res.clearCookie(stateKey);  // remove cookie, already validated state
 		let authOptions = {
 			url: 'https://accounts.spotify.com/api/token',
 			form: {
@@ -227,13 +250,22 @@ router.get('/callback', function(req, res) {
 			},
 			json: true
 		};
-		request.post(authOptions, function(error, response, body) {
+		request.post(authOptions, (error, response, body) => {
 			if (!error && response.statusCode === 200) {
 				let access_token = body.access_token;
 				let refresh_token = body.refresh_token;
 				spotifyAPI.setAccessToken(access_token);
+				spotifyAPI.setRefreshToken(refresh_token);
+
+				tokenExpirationEpoch = new Date().getTime() / 1000 + body['expires_in'];
+
+				console.log('Retrieved token. It expires in ' +
+					Math.floor(tokenExpirationEpoch - new Date().getTime() / 1000) +
+					' seconds!'
+				);
 
 				// passing the token to the browser to make requests from there
+				//TODO: send expiration info to client and have client make request to refresh when it gets close to expiration
 				res.redirect('http://catchthatflow.com/' + '#login-success-' + access_token);
 			}
 			else {
@@ -262,6 +294,7 @@ router.get('/refresh_token', function(req, res) {
 		if (!error && response.statusCode === 200) {
 			let access_token = body.access_token;
 			spotifyAPI.setAccessToken(access_token);
+			// TODO: send new access token back to user
 		}
 	});
 });
