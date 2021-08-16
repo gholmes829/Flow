@@ -16,16 +16,22 @@ const App = () => {
         loggedIn: false,
         accessToken: ""
     })
+
+    const [state, setState] = useState({
+        analyzed: false,
+    })
     
     const [selection, setSelection] = useState({
-        song: "",
         playlist: {
             name: "",
             songs: [],
         }
     })
 
+    const [songSelection, setSongSelection] = useState("")
+
     useEffect(() => {
+        console.log("Getting user data!")
         const initializeUser = () => {
             if (window.location.hash.includes("success-")) {
                 let accessToken = window.location.hash.replace("#login-success-", "")
@@ -69,12 +75,14 @@ const App = () => {
                     user = {user}
                     selection = {selection}
                     setSelection = {setSelection}
+                    songSelection = {songSelection}
+                    setSongSelection = {setSongSelection}
+                    state = {state}
+                    setState = {setState}
                 />
 
                 <CommandColumn
-                    user = {user}
-                    selection = {selection}
-                    setSelection = {setSelection}
+                    songs = {selection.playlist.songs}
                 />
 
             </div>

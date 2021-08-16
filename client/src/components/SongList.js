@@ -1,30 +1,41 @@
-import React from "react";
+import React, {useEffect} from "react";
 import "../App.css";
 
 const SongList = (props) => {
 
+    const setSongSelection = props.setSongSelection
+
+    useEffect(() => {
+        console.log("Setting initial selection!")
+        setSongSelection((u) => {
+            let initialSong = props.selection.playlist.songs[0]
+            let initialButton = document.getElementById(initialSong.uri)
+            initialButton.style.backgroundColor = "#8D8D8D"
+            return initialSong
+        })
+    }, [setSongSelection])
+
     return (
         <>
-        {props.selection.playlist.songs.map(song =>
+        {props.songs.map(song =>
             <button
                 id={song.uri}
                 className="Selectable"
                 key={song.uri}
                 onClick = {() => {
-                    if (props.selection.song !== "") {
-                        let prevButton = document.getElementById(props.selection.song.uri)
+                    console.log("Click!")
+                    props.setSongSelection(song)
+                    if (props.songSelection !== "") {
+                        let prevButton = document.getElementById(props.songSelection.uri)
                         prevButton.style = {}
                     }
                     let currButton = document.getElementById(song.uri)
-                    currButton.style.backgroundColor = "#8D8D8D";
+                    currButton.style.backgroundColor = "#8D8D8D"
                     
-                    props.setSelection({
-                        ...props.selection,
-                        song: song,
-                        })
-                    }
+                    
+                }
             }>
-                {song.name + song.score + song.cluster}
+                {song.name}
             </button>)}
         </>
     )

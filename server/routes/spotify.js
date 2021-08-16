@@ -34,23 +34,29 @@ var getSongData = function(song, features, playlistID) {
 };
 
 
-var getAudioFeatures = function(id, retries=25) {
-    //console.log("GETTING FEATURES: " + id);
+const getAudioFeatures = (id, retries=25) => {
     return new Promise((resolve, reject) => {
         let features = [];
         if (!retries) {
             console.log("Rejecting!!!");
             reject(null);
         }
-        //console.log(id);
         spotifyAPI.getAudioFeaturesForTrack(id)
         .then(res => {
-            //console.log("Complete!");
-            features = res;
+			
+            features = {
+				danceability: res.body.danceability,
+				energy: res.body.energy,
+				speechiness: res.body.speechiness,
+				acousticness: res.body.acousticness,
+				instrumentalness: res.body.instrumentalness,
+				liveness: res.body.liveness,
+				valence: res.body.valence,
+				tempo: res.body.tempo,
+			}
             resolve(features);
         })
         .catch(err => {
-			console.log("BIG ERROR: " + JSON.stringify(err));
 			console.log(retries + " " + (10.25 - retries));
 			let result = null;
 			setTimeout(() => {
@@ -62,7 +68,7 @@ var getAudioFeatures = function(id, retries=25) {
     });
 };
 
-router.post('/analyzePlaylist', function(req, res) {
+router.post('/analyzePlaylist', (req, res) => {
 	let song_data = req.body
 	console.log("Spawning child...")
 	target_path = path.join(path.resolve(__dirname, '..'), 'services', 'analysis.py')
@@ -74,7 +80,7 @@ router.post('/analyzePlaylist', function(req, res) {
 		song_scores = message
 	})
 
-	pyshell.end(function (err, code, signal) {
+	pyshell.end((err, code, signal) => {
 		if (err) throw err;
 		console.log('The exit code was: ' + code);
 		console.log('The exit signal was: ' + signal);
@@ -83,49 +89,27 @@ router.post('/analyzePlaylist', function(req, res) {
 
 });
 
-router.get('/makePlaylist/:id-name-token', function(req, res, next) {
-	// Create a private playlist
-	let id = req.params["id"];
-	let name = req.params["name"];
-    let access_token = req.params["token"];
-    spotifyAPI.setAccessToken(access_token);
-	spotifyApi.createPlaylist(name, { 'description': 'Flow generated playlist', 'public': true })  // change this to private?
-	.then(function(data) {
-		res.send('Created playlist!');
-	}, function(err) {
-		console.log('Error: ', err);
-	});
-});
-
-router.get('/addTracksToPlaylist/:playlistID-:tracks(spotify:track:*((-spotify:track:*)+)?)-token', function(req, res, next) {
-	let playlistID = req.params["playlistID"];
-    let access_token = req.params["token"];
-    spotifyAPI.setAccessToken(access_token);
-	let tracks = req.params.tracks.split('-');  // I sure hope the regex works...
-	spotifyApi.addTracksToPlaylist(playlistID, tracks)
-	.then(function(data) {
-		console.log('Added tracks to playlist!');
-	}, function(err) {
-		console.log('Something went wrong!', err);
-	});
-});
-
-// maybe don't include this one...
-router.get('/removeTrackFromPlaylist/:playlistID-songURI-token', function(req, res, next) {
-	// Remove all occurrence of a track
-	let playlistID = req.params["playlistID"];
-	let songURI = req.params["songURI"];
-    let access_token = req.params["token"];
-    spotifyAPI.setAccessToken(access_token);
-	var tracks = [{ uri : songURI }];
-	var options = {} // does this work?
-	//var options = { snapshot_id : "0wD+DKCUxiSR/WY8lF3fiCTb7Z8X4ifTUtqn8rO82O4Mvi5wsX8BsLj7IbIpLVM9" };
-	spotifyApi.removeTracksFromPlaylist(playlistId, tracks, options)
-	.then(function(data) {
-		console.log('Tracks removed from playlist!');
-	}, function(err) {
-		console.log('Something went wrong!', err);
-	});
+router.post('/createPlaylist/:name/:token', (req, res) => {
+	let songURIs = req.body.data
+	let playlistName = req.params["name"];
+	let accessToken = req.params["token"]
+	console.log(songURIs, playlistName, accessToken)
+	
+	try {
+		spotifyAPI.setAccessToken(accessToken);
+		spotifyAPI.createPlaylist(playlistName, { 'description': 'Flow generated playlist!', 'public': true })  // change this to private?
+		.then(data => {
+			let id = data.body.id
+			return spotifyAPI.addTracksToPlaylist(id, songURIs, null)
+		})
+		.then(data => {
+			console.log("Created new playlist!!!")
+			res.send(data)
+		})
+	}
+	catch (err) {
+		console.log(err)
+	}
 });
 
 router.get('/userData/:token', function(req, res, next) {	
@@ -142,7 +126,6 @@ router.get('/userData/:token', function(req, res, next) {
         .then(playlists => {
             //data.body.items.forEach(playlist => {playlists[playlist.id] = playlist.name});
             data.playlists = playlists.body.items.map(playlist => ({"name": playlist.name, "id": playlist.id, "images": playlist.images}))
-            console.log("Data: " + data);
             res.send(data);
         })
         .catch(err => {
@@ -177,7 +160,7 @@ router.get('/songFeatures/:id/:token', function(req, res, next) {
 	let songID = req.params.id;
 	spotifyAPI.getAudioFeaturesForTrack(songID)
 	.then(features =>
-		res.send({features: features.body}))
+		res.send({features: features}))
 	.catch(err => {
 		console.log("Error: " + err);
 		res.send(err);
@@ -193,7 +176,10 @@ router.get('/playlist/:id/:token', function(req, res, next) {
 	.then(data => {
 		let songs = data.body.tracks.items;  // list of songs in playlist
 		Promise.all(data.body.tracks.items.map(song => getAudioFeatures(song.track.id)))  // get audio features
-		.then(songData => res.send({"playlist": songData.map((data, i) => getSongData(songs[i].track, data.body, playlistID))}))  // refine and send data
+		.then(songData => {
+			let finalData = {playlist: songData.map((data, i) => getSongData(songs[i].track, data, playlistID))}
+			res.send(finalData)
+		})  // refine and send data
 		.catch(err => {
 			console.log("Error: " + err);
 			res.send(err);
@@ -208,7 +194,7 @@ router.get('/playlist/:id/:token', function(req, res, next) {
 router.get('/login', function(req, res, next) {
 	// log in to account
 	let state = generateRandomString(16);
-	let scope = 'user-read-private user-read-email';
+	let scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
 	let queryString = querystring.stringify({
 		response_type: 'code',
 		client_id: client_id,
