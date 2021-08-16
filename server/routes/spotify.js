@@ -35,22 +35,28 @@ var getSongData = function(song, features, playlistID) {
 
 
 const getAudioFeatures = (id, retries=25) => {
-    //console.log("GETTING FEATURES: " + id);
     return new Promise((resolve, reject) => {
         let features = [];
         if (!retries) {
             console.log("Rejecting!!!");
             reject(null);
         }
-        //console.log(id);
         spotifyAPI.getAudioFeaturesForTrack(id)
         .then(res => {
-            //console.log("Complete!");
-            features = res;
+			
+            features = {
+				danceability: res.body.danceability,
+				energy: res.body.energy,
+				speechiness: res.body.speechiness,
+				acousticness: res.body.acousticness,
+				instrumentalness: res.body.instrumentalness,
+				liveness: res.body.liveness,
+				valence: res.body.valence,
+				tempo: res.body.tempo,
+			}
             resolve(features);
         })
         .catch(err => {
-			console.log("BIG ERROR: " + JSON.stringify(err));
 			console.log(retries + " " + (10.25 - retries));
 			let result = null;
 			setTimeout(() => {
@@ -93,9 +99,7 @@ router.post('/createPlaylist/:name/:token', (req, res) => {
 		spotifyAPI.setAccessToken(accessToken);
 		spotifyAPI.createPlaylist(playlistName, { 'description': 'Flow generated playlist!', 'public': true })  // change this to private?
 		.then(data => {
-			console.log(data)
 			let id = data.body.id
-			console.log(id)
 			return spotifyAPI.addTracksToPlaylist(id, songURIs, null)
 		})
 		.then(data => {
@@ -122,7 +126,6 @@ router.get('/userData/:token', function(req, res, next) {
         .then(playlists => {
             //data.body.items.forEach(playlist => {playlists[playlist.id] = playlist.name});
             data.playlists = playlists.body.items.map(playlist => ({"name": playlist.name, "id": playlist.id, "images": playlist.images}))
-            console.log("Data: " + data);
             res.send(data);
         })
         .catch(err => {
@@ -157,7 +160,7 @@ router.get('/songFeatures/:id/:token', function(req, res, next) {
 	let songID = req.params.id;
 	spotifyAPI.getAudioFeaturesForTrack(songID)
 	.then(features =>
-		res.send({features: features.body}))
+		res.send({features: features}))
 	.catch(err => {
 		console.log("Error: " + err);
 		res.send(err);
@@ -173,7 +176,10 @@ router.get('/playlist/:id/:token', function(req, res, next) {
 	.then(data => {
 		let songs = data.body.tracks.items;  // list of songs in playlist
 		Promise.all(data.body.tracks.items.map(song => getAudioFeatures(song.track.id)))  // get audio features
-		.then(songData => res.send({"playlist": songData.map((data, i) => getSongData(songs[i].track, data.body, playlistID))}))  // refine and send data
+		.then(songData => {
+			let finalData = {playlist: songData.map((data, i) => getSongData(songs[i].track, data, playlistID))}
+			res.send(finalData)
+		})  // refine and send data
 		.catch(err => {
 			console.log("Error: " + err);
 			res.send(err);

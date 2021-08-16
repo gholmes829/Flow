@@ -11,10 +11,7 @@ const MusicColumn = (props) => {
         if (!removedSongs.includes(song.uri)) {
             setRemovedSongs([...removedSongs, song.uri])
         }
-        props.setSelection({
-            ...props.selection,
-            song: "",
-        })
+        props.setSongSelection("")
     }
 
     const saveCopy = () => { 
@@ -40,6 +37,7 @@ const MusicColumn = (props) => {
             ...props.state,
             analyzed: true,
         })
+
         fetch("http://catchthatflow.com:9000/spotify/analyzePlaylist", {
             headers: {
                 'Accept': 'application/json',
@@ -51,7 +49,6 @@ const MusicColumn = (props) => {
         .then(res => res.json())
         .then(res => {
             props.setSelection({
-                ...props.selection,
                 playlist: {
                     ...props.selection.playlist,
                     songs: props.selection.playlist.songs.map((song, i) => ({
@@ -79,6 +76,8 @@ const MusicColumn = (props) => {
                             <SongList
                                 selection = {props.selection}
                                 setSelection = {props.setSelection}
+                                songSelection = {props.songSelection}
+                                setSongSelection = {props.setSongSelection}
                                 songs = {props.selection.playlist.songs.filter(song => !removedSongs.includes(song.uri))}
                             />
                         :    
@@ -109,7 +108,7 @@ const MusicColumn = (props) => {
                         <>
                             <button
                                 className="Control"
-                                onClick={() => removeSong(props.selection.song)}
+                                onClick={() => removeSong(props.songSelection)}
                             >
                                 Remove Song
                             </button>
@@ -139,7 +138,8 @@ const MusicColumn = (props) => {
                                 ...props.state,
                                 analyzed: false,
                             })
-                            props.setSelection({button: "", song: "", playlist: {songs: [], name: ""}})
+                            props.setSelection({playlist: {songs: [], name: ""}})
+                            props.setSongSelection("")
                             let music = document.getElementById("Music")
                             music.scrollTo(0, 0)
                             setRemovedSongs([])
@@ -156,8 +156,8 @@ const MusicColumn = (props) => {
                     title="Sample"
                     src={ 
                         (() => {
-                            if (props.selection.song) {
-                                return "https://open.spotify.com/embed/track/" + props.selection.song.uri
+                            if (props.songSelection) {
+                                return "https://open.spotify.com/embed/track/" + props.songSelection.uri
                             }
                             else if (props.selection.playlist.songs.length) {
                                 return "https://open.spotify.com/embed/track/" + props.selection.playlist.songs[0].uri 

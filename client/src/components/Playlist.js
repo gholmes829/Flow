@@ -15,7 +15,6 @@ const Playlist = (props) => {
         .then(playlistSongs => {
             if (playlistSongs) {
                 props.setSelection({
-                    ...props.selection,
                     playlist: {
                         name: playlistName,
                         songs: playlistSongs.map(song => ({
@@ -27,7 +26,7 @@ const Playlist = (props) => {
                 })
             }
             else {
-                alert("Error 423 from excess API requests. Please wait a moment and try again!");
+                alert("Error from excess API requests. Please wait a moment and try again!");
             }
         })
         
