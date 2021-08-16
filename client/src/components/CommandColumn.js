@@ -10,6 +10,10 @@ const CommandColumn = (props) => {
     // have nodes of same cluster be connect
     // consider connecting other songs by genre or other
     // note: set scrollable to false to prevent scrollbar thing
+    // when initial song gets selected, set it to dark color
+    // might be a bug with song selection and color
+    // clicking on song resets graph
+
     let graphData = {
         "nodes": [ 
             { 
@@ -39,12 +43,12 @@ const CommandColumn = (props) => {
             height: dims.height
         }))
     }, [])
-
+    
     return (
         <>
-        <div className="Column" style={{"width": "28%"}}>
+        <div className="Column" style={{"width": "63.5%"}}>
             <div className="Text">Analysis Results</div>
-            <div className="Items" id = {"CmdItems"} style={{height: "100%"}}>
+            <div className="Items" id = {"CmdItems"} style={{"height": "100%", "overflowY": "hidden"}}>
                 {props.selection.playlist.songs.length && props.selection.playlist.songs[0].score ?
                     <ForceGraph2D
                         graphData={graphData}
@@ -55,7 +59,7 @@ const CommandColumn = (props) => {
                     />
                     :
                     <>
-                        <br></br>Select playlist and press "Analyze Playlist"
+                        <br></br>Log in, select playlist, and press "Analyze Playlist"
                     </>
                 }
             </div>

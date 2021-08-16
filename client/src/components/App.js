@@ -16,6 +16,10 @@ const App = () => {
         loggedIn: false,
         accessToken: ""
     })
+
+    const [state, setState] = useState({
+        analyzed: false,
+    })
     
     const [selection, setSelection] = useState({
         song: "",
@@ -69,6 +73,8 @@ const App = () => {
                     user = {user}
                     selection = {selection}
                     setSelection = {setSelection}
+                    state = {state}
+                    setState = {setState}
                 />
 
                 <CommandColumn
