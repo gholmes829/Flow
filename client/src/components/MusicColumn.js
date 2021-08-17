@@ -27,38 +27,9 @@ const MusicColumn = (props) => {
         })
         .then(res => res.json())
         .then(res => {
-            let snapshotID = res.body.snapshot_id
+            //let snapshotID = res.body.snapshot_id
         })
         .catch(err => console.log("Error: " + err))
-    }
-
-	const analyzePlaylist = (songs) => {
-        props.setState({
-            ...props.state,
-            analyzed: true,
-        })
-
-        fetch("http://catchthatflow.com:9000/spotify/analyzePlaylist", {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({songs: songs}),
-            method: "POST"
-        })
-        .then(res => res.json())
-        .then(res => {
-            props.setSelection({
-                playlist: {
-                    ...props.selection.playlist,
-                    songs: props.selection.playlist.songs.map((song, i) => ({
-                        ...song,
-                        score: res.song_scores[i].score,
-                        cluster: res.song_scores[i].cluster
-                    }))
-                }
-            })
-        })
     }
 
 
@@ -85,6 +56,8 @@ const MusicColumn = (props) => {
                                 user = {props.user}
                                 selection = {props.selection}
                                 setSelection = {props.setSelection}
+                                setState = {props.setState}
+                                state = {props.state}
                             />
                         }
                     </>
@@ -98,7 +71,8 @@ const MusicColumn = (props) => {
             <div className="Controls">
                 {props.selection.playlist.songs.length === 0 ? 
                 <>
-                    <button className="Unactive">Analyze Playlist</button> 
+                    <button className="Unactive">Remove Song</button> 
+                    <button className="Unactive">Save a Copy</button> 
                     <button className="Unactive">Back</button>   
                 </> 
                 :
@@ -122,13 +96,7 @@ const MusicColumn = (props) => {
                         </>
 
                         :
-                        <button
-                            className="Control"
-                            onClick={() => analyzePlaylist(props.selection.playlist.songs)}
-                        >
-
-                            Analyze Playlist
-                        </button>
+                        <></>
                     }
 
                     <button

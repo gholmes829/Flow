@@ -6,14 +6,14 @@ const SongList = (props) => {
     const setSongSelection = props.setSongSelection
 
     useEffect(() => {
-        console.log("Setting initial selection!")
+        //console.log("Setting initial selection!")
         setSongSelection((u) => {
             let initialSong = props.selection.playlist.songs[0]
             let initialButton = document.getElementById(initialSong.uri)
             initialButton.style.backgroundColor = "#8D8D8D"
             return initialSong
         })
-    }, [setSongSelection])
+    }, [setSongSelection, props.selection.playlist])
 
     return (
         <>
@@ -23,7 +23,6 @@ const SongList = (props) => {
                 className="Selectable"
                 key={song.uri}
                 onClick = {() => {
-                    console.log("Click!")
                     props.setSongSelection(song)
                     if (props.songSelection !== "") {
                         let prevButton = document.getElementById(props.songSelection.uri)

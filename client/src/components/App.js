@@ -31,7 +31,6 @@ const App = () => {
     const [songSelection, setSongSelection] = useState("")
 
     useEffect(() => {
-        console.log("Getting user data!")
         const initializeUser = () => {
             if (window.location.hash.includes("success-")) {
                 let accessToken = window.location.hash.replace("#login-success-", "")

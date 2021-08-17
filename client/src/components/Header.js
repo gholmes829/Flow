@@ -11,7 +11,9 @@ const Header = (props) => {
             loggedIn: false,
             accessToken: ""
         });
+        console.log("Redirecting!")
         window.location.href="http://catchthatflow.com:9000/spotify/login"  // consider useHistory hook
+        console.log("Done!")
     }
 
     return (

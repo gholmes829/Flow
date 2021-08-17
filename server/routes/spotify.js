@@ -114,29 +114,35 @@ router.post('/createPlaylist/:name/:token', (req, res) => {
 
 router.get('/userData/:token', function(req, res, next) {	
 	// gets users playlists, sends username, profilePic, and playlists
-    let access_token = req.params["token"];
-    spotifyAPI.setAccessToken(access_token);
+    let access_token = req.params["token"]
+    spotifyAPI.setAccessToken(access_token)
     let data = {};
     spotifyAPI.getMe()
     .then(userInfo => {
-        let body = userInfo.body;
-        data.username = body.display_name;
-        data.profilePic = body.images[0].url;
+        let body = userInfo.body
+        data.username = body.display_name
+		try {
+			data.profilePic = body.images[0].url
+		}
+		catch (err) {
+			data.profilePic = ""
+		}
+
         spotifyAPI.getUserPlaylists()
         .then(playlists => {
             //data.body.items.forEach(playlist => {playlists[playlist.id] = playlist.name});
             data.playlists = playlists.body.items.map(playlist => ({"name": playlist.name, "id": playlist.id, "images": playlist.images}))
-            res.send(data);
+            res.send(data)
         })
         .catch(err => {
             console.log("Error: " + err);
-            res.send(err);
-        });
+            res.send(err)
+        })
     })
     .catch(err => {
             console.log("Error: " + err);
-            res.send(err);
-    });
+            res.send(err)
+    })
 });
 
 router.get('/userPlaylists/:token', function(req, res, next) {

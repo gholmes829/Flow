@@ -354,7 +354,7 @@ class Clusters(dict):
 
 		Computes score as described in "_generateScores". Uses exponents to weight terms.
 		"""
-		return (relativeDist**2)*(np.sqrt(relativeAvgDist))*(relativeDistToCenter**2)*(np.sqrt(relativeClusterSize**3))
+		return 1 / (relativeDist**2)*(np.sqrt(relativeAvgDist))*(relativeDistToCenter**2)*(np.sqrt(relativeClusterSize**3))
 
 	def _simplify(self) -> None:
 		"""
