@@ -21,7 +21,7 @@ const Playlist = (props) => {
                 analyzePlaylist(moddedSongs, playlistName)
             }
             else {
-                alert("Error from excess API requests. Please wait a moment and try again!");
+                console.log("Potential error from excess API requests!!!");
             }
         })
         .catch(err => console.log("Error: " + err))

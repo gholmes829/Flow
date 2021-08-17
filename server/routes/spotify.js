@@ -33,33 +33,20 @@ var getSongData = function(song, features, playlistID) {
 	};
 };
 
-
-const getAudioFeatures = (id, retries=30) => {
-    return new Promise((resolve, reject) => {
-        let features = [];
-        if (!retries) {
-            console.log("Rejecting!!!");
-            reject(null);
-        }
-        spotifyAPI.getAudioFeaturesForTrack(id)
-        .then(res => {
-            features = {
-				danceability: res.body.danceability,
-				energy: res.body.energy,
-				speechiness: res.body.speechiness,
-				acousticness: res.body.acousticness,
-				instrumentalness: res.body.instrumentalness,
-				liveness: res.body.liveness,
-				valence: res.body.valence,
-				tempo: res.body.tempo,
-			}
-            resolve(features);
-        })
-        .catch(err => {
-			console.log(retries + " " + (10.25 - retries));
-			setTimeout(() => {getAudioFeatures(id, retries-1).then(res => resolve(res))}, 100 * Math.min(5, 10.25 - retries));
-        })
-    })
+const getAudioFeatures = (trackIds) => {
+	return spotifyAPI.getAudioFeaturesForTracks(trackIds)
+	.then(res => {
+		return res.body.audio_features.map(rawFeatures => ({
+			danceability: rawFeatures.danceability,
+			energy: rawFeatures.energy,
+			speechiness: rawFeatures.speechiness,
+			acousticness: rawFeatures.acousticness,
+			instrumentalness: rawFeatures.instrumentalness,
+			liveness: rawFeatures.liveness,
+			valence: rawFeatures.valence,
+			tempo: rawFeatures.tempo,
+		}))
+	})
 }
 
 router.post('/analyzePlaylist', (req, res) => {
@@ -175,21 +162,22 @@ router.get('/playlist/:id/:token', function(req, res, next) {
 	spotifyAPI.getPlaylist(req.params.id)  // get playlist info
 	.then(data => {
 		let songs = data.body.tracks.items;  // list of songs in playlist
-		Promise.all(data.body.tracks.items.map(song => getAudioFeatures(song.track.id)))  // get audio features
-		.then(songData => {
-			let finalData = {playlist: songData.map((data, i) => getSongData(songs[i].track, data, playlistID))}
+		let trackIds = songs.map(song => song.track.id)
+		getAudioFeatures(trackIds)
+		.then(trackFeatures => {
+			let finalData = {playlist: trackFeatures.map((features, i) => getSongData(songs[i].track, features, playlistID))}
 			res.send(finalData)
-		})  // refine and send data
+		})
 		.catch(err => {
 			console.log("Error: " + err);
 			res.send(err);
-		});
+		})
 	})
 	.catch(err => {
 		console.log("Error: " + err);
 		res.send(err);
-	});
-});
+	})
+})
 
 router.get('/login', function(req, res, next) {
 	// log in to account

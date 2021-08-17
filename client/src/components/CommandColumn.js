@@ -13,7 +13,7 @@ const CommandColumn = props => {
     let graphData = (() => {
         if (props.songs.length && props.songs[0].score !== "") {
             let clusters = {}
-            let maxSizeRatio = 15
+            let maxSizeRatio = 20
             props.songs.forEach((song) => {
                 if (!(song.cluster in clusters)) {
                     clusters[song.cluster] = [song.uri]

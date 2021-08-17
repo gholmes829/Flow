@@ -47,8 +47,6 @@ const BloomGraph = props => {
     }, [props.songSelection])
     */
 
-    const distance = 500
-
     useEffect(() => {
         const bloomPass = new UnrealBloomPass()
         bloomPass.strength = 2
