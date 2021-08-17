@@ -1,8 +1,7 @@
-import React from "react";
-import "../App.css";
+import React from "react"
+import "../App.css"
 
 const Header = (props) => {
-
     const changeUser = () => {
         props.setUser({
             name: "Guest",
@@ -10,10 +9,8 @@ const Header = (props) => {
             playlists: [],
             loggedIn: false,
             accessToken: ""
-        });
-        console.log("Redirecting!")
+        })
         window.location.href="http://catchthatflow.com:9000/spotify/login"  // consider useHistory hook
-        console.log("Done!")
     }
 
     return (

@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from "react";
-import ForceGraph3D from 'react-force-graph-3d';
-import BloomGraph from './BloomGraph';
-import "../App.css";
+import React, { useState, useEffect } from "react"
+import BloomGraph from './BloomGraph'
+import "../App.css"
 
-const CommandColumn = React.memo(props => {
+const CommandColumn = props => {
     const [colDims, setColDims] = useState("")
-    // consider connecting other songs by genre or other
     // when initial song gets selected, set it to dark color
     // might be a bug with song selection and color
-    // clicking on song resets graph
 
     let idToCluster = {}
-
+    let colorSeed = 100 * Math.random()
+    
     let graphData = (() => {
         if (props.songs.length && props.songs[0].score !== "") {
             let clusters = {}
+            let maxSizeRatio = 15
             props.songs.forEach((song) => {
                 if (!(song.cluster in clusters)) {
                     clusters[song.cluster] = [song.uri]
@@ -28,8 +27,8 @@ const CommandColumn = React.memo(props => {
             // array of objects with id, name, and val
             let nodes = props.songs.map((song) => ({
                 "id": song.uri,
-                "name": "\"" + song.name + "\" (" + Math.round(100 * song.score) / 100 + "% relative match)",
-                "val": 1 + (19 * song.score / 100)
+                "name": "\"" + song.name + "\" (" + Math.round(100 * song.score) / 100 + "% match)",
+                "val": 1 + (maxSizeRatio * song.score / 100)
             }))
 
             // list of objects with source and target (ids)
@@ -51,7 +50,6 @@ const CommandColumn = React.memo(props => {
                         })
                     }
 
-                    
                     ([...Array(chances).keys()]).forEach(i => {
                         if (Math.random() < successRate) {
                             let randIndex = Math.round((URIs.length - 1) * Math.random())
@@ -67,7 +65,6 @@ const CommandColumn = React.memo(props => {
 
                 })
             })
-
             return {
                 "nodes": nodes,
                 "links": links
@@ -86,8 +83,6 @@ const CommandColumn = React.memo(props => {
         }))
     }, [])
 
-    let colorSeed = 100 * Math.random()
-
     return (
         <>
         <div className="Column" style={{"width": "63.5%"}}>
@@ -102,17 +97,27 @@ const CommandColumn = React.memo(props => {
                             return idToCluster[d.id] + colorSeed
                         }}
                         showNavInfo = {false}
-                        d3VelocityDecay = {0.6}
+                        d3VelocityDecay = {0.55}
+                        songs = {props.songs}
+                        //songSelection = {props.songSelection}
+                        setSongSelection = {props.setSongSelection}
                     />
                     :
-                    <>
-                        <br></br>Log in, select playlist, and press "Analyze Playlist"
-                    </>
+                    <div style={{"width": "90%", "margin": "auto", "fontSize": "small"}}>
+                        <br></br>
+                        <h2>Notes:</h2>
+                        <p>
+                            1) Analysis will show clustering and cohesion of songs in playlist.<br></br><br></br>
+                            2) Songs in large clusters with high scores are a good fit!<br></br><br></br>
+                            3) Song scores are all relative to the playlist, so every playlist has a "perfectly good" and "perfectly bad" fitting song.<br></br><br></br>
+                            4) Algorithm is randomly initialized so analysis results for a given playlist may change.
+                        </p>
+                    </div>
                 }
             </div>
         </div>
         </>
     )
-})
+}
 
-export default CommandColumn;
+export default React.memo(CommandColumn)

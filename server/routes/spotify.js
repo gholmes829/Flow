@@ -34,7 +34,7 @@ var getSongData = function(song, features, playlistID) {
 };
 
 
-const getAudioFeatures = (id, retries=25) => {
+const getAudioFeatures = (id, retries=30) => {
     return new Promise((resolve, reject) => {
         let features = [];
         if (!retries) {
@@ -43,7 +43,6 @@ const getAudioFeatures = (id, retries=25) => {
         }
         spotifyAPI.getAudioFeaturesForTrack(id)
         .then(res => {
-			
             features = {
 				danceability: res.body.danceability,
 				energy: res.body.energy,
@@ -58,15 +57,10 @@ const getAudioFeatures = (id, retries=25) => {
         })
         .catch(err => {
 			console.log(retries + " " + (10.25 - retries));
-			let result = null;
-			setTimeout(() => {
-				getAudioFeatures(id, retries-1)
-				.then(res => resolve(res));
-            }, 100 * Math.min(5, 10.25 - retries));
-        });
-        
-    });
-};
+			setTimeout(() => {getAudioFeatures(id, retries-1).then(res => resolve(res))}, 100 * Math.min(5, 10.25 - retries));
+        })
+    })
+}
 
 router.post('/analyzePlaylist', (req, res) => {
 	let song_data = req.body

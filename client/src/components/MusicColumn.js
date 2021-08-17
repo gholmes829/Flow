@@ -1,23 +1,27 @@
-import React, {useState} from "react";
+import React, {useState} from "react"
 import SongList from "./SongList"
 import Playlist from "./Playlist"
-import "../App.css";
+import "../App.css"
 
 const MusicColumn = (props) => {
-
     const [removedSongs, setRemovedSongs] = useState([])
 
     const removeSong = (song) => {
         if (!removedSongs.includes(song.uri)) {
-            setRemovedSongs([...removedSongs, song.uri])
+            setRemovedSongs((u) => {
+                let newSelection = props.selection.playlist.songs
+                .filter(tempSong => (!removedSongs.includes(tempSong.uri) && (tempSong.uri !== song.uri)))[0]
+                props.setSongSelection(newSelection)
+                return [...removedSongs, song.uri]})
         }
-        props.setSongSelection("")
     }
 
     const saveCopy = () => { 
-        let newSongURIs = props.selection.playlist.songs.filter((song) => !removedSongs.includes(song.uri)).map(song => "spotify:track:" + song.uri)
-
-        fetch("http://catchthatflow.com:9000/spotify/createPlaylist/" + props.selection.playlist.name + " (Flow)/" + props.user.accessToken, {
+        let newSongURIs = props.selection.playlist.songs
+        .filter((song) => !removedSongs.includes(song.uri))
+        .map(song => "spotify:track:" + song.uri)
+        
+        fetch("http://catchthatflow.com:9000/spotify/createPlaylist/" + props.selection.playlist.name + " (Flow Copy)/" + props.user.accessToken, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -25,25 +29,20 @@ const MusicColumn = (props) => {
             body: JSON.stringify({data: newSongURIs}),
             method: "POST"
         })
-        .then(res => res.json())
         .then(res => {
-            //let snapshotID = res.body.snapshot_id
+            alert("Playlist saved successfully!")
         })
         .catch(err => console.log("Error: " + err))
     }
 
-
     return (
-
         <>
         <div className="Column">
-            
-            <div className="Text">{props.selection.playlist.name ? "\"" + props.selection.playlist.name + (props.state.analyzed ? " (Flow)" : "") + "\"" : "Music"}</div>
-            
+            <div className="Text">{props.selection.playlist.name ? props.selection.playlist.name + " (Copy)" : "My Playlists"}</div>
             <div className="Items" id="Music" style={{height: 0.325 * window.screen.height}}>
-                {props.user.loggedIn ?
-                    <>
-                        {props.selection.playlist.songs.length > 0 ?
+                {(() => {
+                    if (props.user.loggedIn && props.state.analyzed) {
+                        return (
                             <SongList
                                 selection = {props.selection}
                                 setSelection = {props.setSelection}
@@ -51,25 +50,32 @@ const MusicColumn = (props) => {
                                 setSongSelection = {props.setSongSelection}
                                 songs = {props.selection.playlist.songs.filter(song => !removedSongs.includes(song.uri))}
                             />
-                        :    
+                        )
+                    }
+                    else if (props.user.loggedIn && props.state.fetched && !props.state.analyzed) {
+                        return <><br></br>Loading!!!</>
+                    }
+                    else if (props.user.loggedIn && !props.state.fetched) {
+                        return (
                             <Playlist
                                 user = {props.user}
                                 selection = {props.selection}
                                 setSelection = {props.setSelection}
+                                setSongSelection = {props.setSongSelection}
                                 setState = {props.setState}
                                 state = {props.state}
                             />
-                        }
-                    </>
-                    :
-                    <>
-                        <br></br>Log in to view playlists...
-                    </>
+                        )
                     }
+                    else if (!props.user.loggedIn) {
+                        return (
+                            <><br></br>Log in and select playlist...</>
+                        )
+                    }
+                })()}
             </div>
-
             <div className="Controls">
-                {props.selection.playlist.songs.length === 0 ? 
+                {!props.state.analyzed ? 
                 <>
                     <button className="Unactive">Remove Song</button> 
                     <button className="Unactive">Save a Copy</button> 
@@ -77,33 +83,20 @@ const MusicColumn = (props) => {
                 </> 
                 :
                 <> 
-                    {
-                        props.state.analyzed ?
-                        <>
-                            <button
-                                className="Control"
-                                onClick={() => removeSong(props.songSelection)}
-                            >
-                                Remove Song
-                            </button>
-
-                            <button
-                            className="Control"
-                            onClick={() => saveCopy()}
-                            >
-                            Save a Copy
-                            </button>
-                        </>
-
-                        :
-                        <></>
-                    }
-
+                    <button
+                        className="Control"
+                        onClick={() => removeSong(props.songSelection)}
+                    >Remove Song</button>
+                    <button
+                        className="Control"
+                        onClick={() => saveCopy()}
+                    >Save Copy</button>                    
                     <button
                         className="Control"
                         onClick={() => {
                             props.setState({
                                 ...props.state,
+                                fetcned: false,
                                 analyzed: false,
                             })
                             props.setSelection({playlist: {songs: [], name: ""}})
@@ -111,14 +104,21 @@ const MusicColumn = (props) => {
                             let music = document.getElementById("Music")
                             music.scrollTo(0, 0)
                             setRemovedSongs([])
+                            // update playlists
+                            fetch("http://catchthatflow.com:9000/spotify/userData/" + props.user.accessToken)
+                            .then(res => res.json())
+                            .then(res => {
+                                props.setUser(() => ({
+                                    ...props.user,
+                                    playlists: res.playlists
+                                }))
+                            })
+                            .catch(err => console.log("Error: " + err));
                         }}
-                    >
-                        Back
-                    </button> 
+                    >Back</button> 
                 </>
                 }
             </div>
-
             <div className="FrameContainer">
                 <iframe
                     title="Sample"
@@ -126,9 +126,6 @@ const MusicColumn = (props) => {
                         (() => {
                             if (props.songSelection) {
                                 return "https://open.spotify.com/embed/track/" + props.songSelection.uri
-                            }
-                            else if (props.selection.playlist.songs.length) {
-                                return "https://open.spotify.com/embed/track/" + props.selection.playlist.songs[0].uri 
                             }
                             else {
                                 return ""
@@ -143,8 +140,8 @@ const MusicColumn = (props) => {
                 </iframe>
             </div>
         </div>
-        </>
+    </>
     )
 }
 
-export default MusicColumn;
+export default MusicColumn

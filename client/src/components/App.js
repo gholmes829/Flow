@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 import Header from "./Header"
-import MusicColumn from "./MusicColumn";
-import CommandColumn from "./CommandColumn";
-import "../App.css";
+import MusicColumn from "./MusicColumn"
+import CommandColumn from "./CommandColumn"
+import "../App.css"
 
 
-// TODO: make new refresh interval that checks expiration and refreshes when it gets close
+// TODO: make new refresh interval that checks expiration and refreshes access token before expiration
 
 const App = () => {
     // state variables
@@ -18,6 +18,7 @@ const App = () => {
     })
 
     const [state, setState] = useState({
+        fetched: false,
         analyzed: false,
     })
     
@@ -56,12 +57,6 @@ const App = () => {
         initializeUser()
     }, [])
     
-    //maybe move these to a better place
-    
-
-	// use (external) react router instead of a href??
-	// combine login and username logo??
-
     return (
         <div className="App">      
             <Header
@@ -72,6 +67,7 @@ const App = () => {
             <div className="Columns">
                 <MusicColumn
                     user = {user}
+                    setUser = {setUser}
                     selection = {selection}
                     setSelection = {setSelection}
                     songSelection = {songSelection}
@@ -79,14 +75,14 @@ const App = () => {
                     state = {state}
                     setState = {setState}
                 />
-
                 <CommandColumn
                     songs = {selection.playlist.songs}
+                    //songSelection = {songSelection}
+                    setSongSelection = {setSongSelection}
                 />
-
             </div>
         </div>
-    );
+    )
 }
 
-export default App;
+export default App
