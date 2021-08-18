@@ -44,13 +44,16 @@ html, body {
   justify-content: center;
   align-items: center;
   border-radius: 15px;
+  padding-left: 10%;
+  padding-right: 10%;
+  overflow: clip;
 }
 
 .Source {
   background-color: #cfd1d4;
   border: solid black;
   padding: 0.5%;
-  width: 50%;
+  width: 45%;
   margin-top: 0%;
   margin-bottom: 0%;
   font-size: medium;
@@ -64,12 +67,14 @@ html, body {
   background-color: #cfd1d4;
   border: solid black;
   padding: 0.25%;
-  width: 80%;
+  width: 90%;
   font-size: medium;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-radius: 15px;
+  min-height: 66px;
+  overflow: clip;
 }
 
 .SubHeader {
@@ -86,17 +91,18 @@ html, body {
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: 31%;
+  width: 60%;
 }
 
 .HeaderButton {
   padding: 10%;
   margin: 5%;
   white-space: nowrap;
+  width: 100%;
 }
 
 .ProfilePic {
-  width: 30px;
+  width: 60%;
   height: auto;
   border: solid black;
   border-radius: 100%;
@@ -172,6 +178,7 @@ html, body {
 }
 
 .Unactive {
+  cursor: default;
   background-color: #8d8d8d;
   margin-left: 3%;
   margin-right: 3%;
@@ -183,6 +190,7 @@ html, body {
 }
 
 .FrameContainer {
+  background-color: #cfd1d4;
   overflow: hidden;
   border: solid black;
   margin-top: 2.5%;

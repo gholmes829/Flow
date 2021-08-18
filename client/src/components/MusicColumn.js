@@ -1,10 +1,12 @@
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
+import ReactLoading from "react-loading"
 import SongList from "./SongList"
 import Playlist from "./Playlist"
 import "../App.css"
 
 const MusicColumn = (props) => {
     const [removedSongs, setRemovedSongs] = useState([])
+    const [saving, setSaving] = useState(false)
 
     const removeSong = (song) => {
         if (!removedSongs.includes(song.uri)) {
@@ -17,6 +19,7 @@ const MusicColumn = (props) => {
     }
 
     const saveCopy = () => { 
+        setSaving(true)
         let newSongURIs = props.selection.playlist.songs
         .filter((song) => !removedSongs.includes(song.uri))
         .map(song => "spotify:track:" + song.uri)
@@ -30,7 +33,8 @@ const MusicColumn = (props) => {
             method: "POST"
         })
         .then(res => {
-            alert("Playlist saved successfully!")
+            setSaving(false)
+            //alert("Playlist saved successfully!")
         })
         .catch(err => console.log("Error: " + err))
     }
@@ -38,25 +42,54 @@ const MusicColumn = (props) => {
     return (
         <>
         <div className="Column">
-            <div className="Text">{props.selection.playlist.name ? props.selection.playlist.name + " (Copy)" : "My Playlists"}</div>
-            <div className="Items" id="Music" style={{height: 0.325 * window.screen.height}}>
+            <div className="Text" style={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis"
+            }}>
+                {props.selection.playlist.name ? props.selection.playlist.name + " (Copy)" : "My Playlists"}
+            </div>
+            
                 {(() => {
                     if (props.user.loggedIn && props.state.analyzed) {
                         return (
+                            <div className="Items" id="Music" style={{height: 0.325 * window.screen.height}}>
                             <SongList
                                 selection = {props.selection}
                                 setSelection = {props.setSelection}
                                 songSelection = {props.songSelection}
                                 setSongSelection = {props.setSongSelection}
                                 songs = {props.selection.playlist.songs.filter(song => !removedSongs.includes(song.uri))}
+                                focusOn = {props.focusOn}
                             />
+                            </div>
                         )
                     }
-                    else if (props.user.loggedIn && props.state.fetched && !props.state.analyzed) {
-                        return <><br></br>Loading!!!</>
+                    else if (props.user.fetched && !props.user.loggedIn || props.user.loggedIn && props.state.fetched && !props.state.analyzed) {
+
+                        return (
+                            <div className="Items" id="Music" style={{
+                                    overflowY: "hidden",
+                                    height: 0.325 * window.screen.height,
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center"
+                                }}>
+                                <div style={{
+                                    width: "50%",
+                                    margin: "auto",
+                                    marginTop: "10%",
+                                    height: "50%",
+                                }}>
+                                    <ReactLoading type={"spin"} height={"100%"} width={"100%"} />
+                                </div>
+                            </div>
+                        )
                     }
                     else if (props.user.loggedIn && !props.state.fetched) {
                         return (
+                            <div className="Items" id="Music" style={{height: 0.325 * window.screen.height}}>
                             <Playlist
                                 user = {props.user}
                                 selection = {props.selection}
@@ -65,15 +98,18 @@ const MusicColumn = (props) => {
                                 setState = {props.setState}
                                 state = {props.state}
                             />
+                            </div>
                         )
                     }
                     else if (!props.user.loggedIn) {
                         return (
+                            <div className="Items" id="Music" style={{height: 0.325 * window.screen.height}}>
                             <><br></br>Log in and select playlist...</>
+                            </div>
                         )
                     }
                 })()}
-            </div>
+            
             <div className="Controls">
                 {!props.state.analyzed ? 
                 <>
@@ -87,11 +123,15 @@ const MusicColumn = (props) => {
                         className="Control"
                         onClick={() => removeSong(props.songSelection)}
                     >Remove Song</button>
-                    <button
-                        className="Control"
-                        onClick={() => saveCopy()}
-                    >Save Copy</button>                    
-                    <button
+                    {saving ?
+                        <button className="Unactive">Saving...</button> 
+                        :
+                        <button
+                            className="Control"
+                            onClick={() => saveCopy()}
+                        >Save Copy</button>
+                    }                  
+                        <button
                         className="Control"
                         onClick={() => {
                             props.setState({
@@ -120,24 +160,33 @@ const MusicColumn = (props) => {
                 }
             </div>
             <div className="FrameContainer">
-                <iframe
-                    title="Sample"
-                    src={ 
-                        (() => {
-                            if (props.songSelection) {
-                                return "https://open.spotify.com/embed/track/" + props.songSelection.uri
-                            }
-                            else {
-                                return ""
-                            }
-                        })()
-                    }
-                    width="100%"
-                    height="80"
-                    frameBorder="0"
-                    allowtransparency="true"
-                    allow="encrypted-media">
-                </iframe>
+                {(props.state.fetched && !props.state.analyzed) ?
+                    <div style={{
+                        margin: "auto",
+                        width: "22.5%"
+                    }}>
+                        <ReactLoading type={"cylon"} height={"100%"} width={"100%"} />
+                    </div>
+                    :
+                    <iframe
+                        title="Sample"
+                        src={ 
+                            (() => {
+                                if (props.songSelection && props.state.analyzed) {
+                                    return "https://open.spotify.com/embed/track/" + props.songSelection.uri
+                                }
+                                else {
+                                    return ""
+                                }
+                            })()
+                        }
+                        width="100%"
+                        height="80"
+                        frameBorder="0"
+                        allowtransparency="true"
+                        allow="encrypted-media">
+                    </iframe>
+                }
             </div>
         </div>
     </>

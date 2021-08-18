@@ -36,22 +36,28 @@ var getSongData = function(song, features, playlistID) {
 const getAudioFeatures = (trackIds) => {
 	return spotifyAPI.getAudioFeaturesForTracks(trackIds)
 	.then(res => {
-		return res.body.audio_features.map(rawFeatures => ({
-			danceability: rawFeatures.danceability,
-			energy: rawFeatures.energy,
-			speechiness: rawFeatures.speechiness,
-			acousticness: rawFeatures.acousticness,
-			instrumentalness: rawFeatures.instrumentalness,
-			liveness: rawFeatures.liveness,
-			valence: rawFeatures.valence,
-			tempo: rawFeatures.tempo,
-		}))
+		let features
+		try {
+			features = res.body.audio_features.map(rawFeatures => ({
+				danceability: rawFeatures.danceability,
+				energy: rawFeatures.energy,
+				speechiness: rawFeatures.speechiness,
+				acousticness: rawFeatures.acousticness,
+				instrumentalness: rawFeatures.instrumentalness,
+				liveness: rawFeatures.liveness,
+				valence: rawFeatures.valence,
+				tempo: rawFeatures.tempo,
+			}))
+		}
+		catch (err) {
+			console.log(err)
+		}
+		return features
 	})
 }
 
 router.post('/analyzePlaylist', (req, res) => {
 	let song_data = req.body
-	console.log("Spawning child...")
 	target_path = path.join(path.resolve(__dirname, '..'), 'services', 'analysis.py')
 	let song_scores
 	let pyshell = new pythonShell.PythonShell(target_path)
@@ -62,9 +68,12 @@ router.post('/analyzePlaylist', (req, res) => {
 	})
 
 	pyshell.end((err, code, signal) => {
-		if (err) throw err;
-		console.log('The exit code was: ' + code);
-		console.log('The exit signal was: ' + signal);
+		if (err) {
+			console.log(err)
+			console.log('The exit code was: ' + code);
+			console.log('The exit signal was: ' + signal);
+		}
+		
 		res.send(song_scores)
 	})
 
@@ -74,7 +83,6 @@ router.post('/createPlaylist/:name/:token', (req, res) => {
 	let songURIs = req.body.data
 	let playlistName = req.params["name"];
 	let accessToken = req.params["token"]
-	console.log(songURIs, playlistName, accessToken)
 	
 	try {
 		spotifyAPI.setAccessToken(accessToken);
@@ -84,7 +92,6 @@ router.post('/createPlaylist/:name/:token', (req, res) => {
 			return spotifyAPI.addTracksToPlaylist(id, songURIs, null)
 		})
 		.then(data => {
-			console.log("Created new playlist!!!")
 			res.send(data)
 		})
 	}
@@ -112,7 +119,9 @@ router.get('/userData/:token', function(req, res, next) {
         spotifyAPI.getUserPlaylists()
         .then(playlists => {
             //data.body.items.forEach(playlist => {playlists[playlist.id] = playlist.name});
-            data.playlists = playlists.body.items.map(playlist => ({"name": playlist.name, "id": playlist.id, "images": playlist.images}))
+            data.playlists = playlists.body.items
+				.map(playlist => ({"name": playlist.name, "id": playlist.id, "images": playlist.images}))
+				.filter(playlist => playlist.name !== "Liked Songs")
             res.send(data)
         })
         .catch(err => {
@@ -226,10 +235,10 @@ router.get('/callback', function(req, res) {
 		};
 		request.post(authOptions, (error, response, body) => {
 			if (!error && response.statusCode === 200) {
-				let access_token = body.access_token;
-				let refresh_token = body.refresh_token;
-				spotifyAPI.setAccessToken(access_token);
-				spotifyAPI.setRefreshToken(refresh_token);
+				let access_token = body.access_token
+				let refresh_token = body.refresh_token
+				//spotifyAPI.setAccessToken(access_token)
+				//spotifyAPI.setRefreshToken(refresh_token)
 
 				tokenExpirationEpoch = new Date().getTime() / 1000 + body['expires_in'];
 
@@ -239,18 +248,18 @@ router.get('/callback', function(req, res) {
 				);
 
 				// passing the token to the browser to make requests from there
-				//TODO: send expiration info to client and have client make request to refresh when it gets close to expiration
+				//TODO: send expiration info (expires_in, refresh_token) to client and have client make request to refresh when it gets close to expiration
 				res.redirect('http://catchthatflow.com/' + '#login-success-' + access_token);
 			}
 			else {
 				res.redirect('/#' +
 				querystring.stringify({
 					error: 'invalid_token'
-				}));
+				}))
 			}
-		});
+		})
 	}
-});
+})
 
 router.get('/refresh_token', function(req, res) {
 	// requesting access token from refresh token
@@ -264,11 +273,11 @@ router.get('/refresh_token', function(req, res) {
 		json: true
 	};
 
-	request.post(authOptions, function(error, response, body) {
+	request.post(authOptions, (error, response, body) => {
 		if (!error && response.statusCode === 200) {
 			let access_token = body.access_token;
 			spotifyAPI.setAccessToken(access_token);
-			// TODO: send new access token back to user
+			res.send({accessToken: access_token})
 		}
 	});
 });

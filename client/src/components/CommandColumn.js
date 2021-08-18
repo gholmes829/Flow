@@ -83,6 +83,8 @@ const CommandColumn = props => {
         }))
     }, [])
 
+    
+
     return (
         <>
         <div className="Column" style={{"width": "63.5%"}}>
@@ -99,6 +101,7 @@ const CommandColumn = props => {
                         showNavInfo = {false}
                         d3VelocityDecay = {0.55}
                         songs = {props.songs}
+                        setFocusOn = {props.setFocusOn}
                         //songSelection = {props.songSelection}
                         setSongSelection = {props.setSongSelection}
                     />
@@ -110,7 +113,8 @@ const CommandColumn = props => {
                             1) Analysis will show clustering and cohesion of songs in playlist.<br></br><br></br>
                             2) Songs in large clusters with high scores are a good fit!<br></br><br></br>
                             3) Song scores are all relative to the playlist, so every playlist has a "perfectly good" and "perfectly bad" fitting song.<br></br><br></br>
-                            4) Algorithm is randomly initialized so analysis results for a given playlist may change.
+                            4) Algorithm is randomly initialized so analysis results for a given playlist may change.<br></br><br></br>
+                            5) Links between nodes within a given cluster are randomly generated and thus have no meaning.
                         </p>
                     </div>
                 }

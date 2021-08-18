@@ -7,7 +7,7 @@ const BloomGraph = props => {
     const fgRef = useRef()
 
     const focusOn = (node) => {
-        const distance = 150
+        const distance = 100
         const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z)
 
         fgRef.current.cameraPosition(
@@ -16,6 +16,8 @@ const BloomGraph = props => {
           3000  // ms transition duration
         )
     }
+
+    let idToNode = {}
 
     const handleClick = useCallback(node => {
         // Aim at node from outside it
@@ -26,26 +28,10 @@ const BloomGraph = props => {
             } 
         })
         props.setSongSelection(targetSong)
+        document.getElementById(node.id).scrollIntoView({ behavior: "auto", block: "center"})
+
         focusOn(node)
     }, [fgRef])
-    /*
-    useEffect(() => {
-        if (props.graphData.nodes) {
-            let targetNode
-            console.log("Effect!!!")
-            console.log(props.graphData.nodes)
-            props.graphData.nodes.forEach(node => {
-                if (node.id === props.songSelection.uri) {
-                    targetNode = node
-                    console.log("Found node: ")
-                    console.log(targetNode)
-                    setTimeout(() => focusOn(targetNode), 1000)
-                }
-            })
-        }
-        
-    }, [props.songSelection])
-    */
 
     useEffect(() => {
         const bloomPass = new UnrealBloomPass()
@@ -53,6 +39,7 @@ const BloomGraph = props => {
         bloomPass.radius = 1
         bloomPass.threshold = 0.075
         fgRef.current.postProcessingComposer().addPass(bloomPass)
+        props.setFocusOn(() => (id) => focusOn(idToNode[id]))
     }, [])
 
     return (
@@ -60,6 +47,10 @@ const BloomGraph = props => {
             ref={fgRef}
             {...props}
             onNodeClick={handleClick}
+            nodeVisibility = {(node) => {
+                idToNode[node.id] = node
+                return true
+            }}
         />
     )
 }

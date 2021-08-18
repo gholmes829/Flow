@@ -19,6 +19,7 @@ const SongList = (props) => {
                 })()}
                 onClick = {() => {
                     props.setSongSelection(song)
+                    props.focusOn(song.uri)
                 }
             }>
                 {"\"" + song.name + "\" (" + Math.round(100 * song.score) / 100 + "% match)"}

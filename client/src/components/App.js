@@ -14,7 +14,8 @@ const App = () => {
         profilePic: "",
         playlists: [],
         loggedIn: false,
-        accessToken: ""
+        accessToken: "",
+        fetched: false,
     })
 
     const [state, setState] = useState({
@@ -29,17 +30,24 @@ const App = () => {
         }
     })
 
+    const [focusOn, setFocusOn] = useState(() => {})
+
     const [songSelection, setSongSelection] = useState("")
 
     useEffect(() => {
         const initializeUser = () => {
             if (window.location.hash.includes("success-")) {
+                setUser({
+                    ...user,
+                    fetched: true,
+                })
                 let accessToken = window.location.hash.replace("#login-success-", "")
                 window.location.hash = "#login-success"
                 fetch("http://catchthatflow.com:9000/spotify/userData/" + accessToken)
                 .then(res => res.json())
                 .then(res => {
                     setUser(() => ({
+                        ...user,
                         name: res.username,
                         profilePic: res.profilePic,
                         playlists: res.playlists,
@@ -62,6 +70,9 @@ const App = () => {
             <Header
                 user = {user}
                 setUser = {setUser}
+                setSelection = {setSelection}
+                setState = {setState}
+                setSongSelection = {setSongSelection}
             />
         
             <div className="Columns">
@@ -74,10 +85,11 @@ const App = () => {
                     setSongSelection = {setSongSelection}
                     state = {state}
                     setState = {setState}
+                    focusOn = {focusOn}
                 />
                 <CommandColumn
                     songs = {selection.playlist.songs}
-                    //songSelection = {songSelection}
+                    setFocusOn = {setFocusOn}
                     setSongSelection = {setSongSelection}
                 />
             </div>
