@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react"
+import React, {useState} from "react"
 import ReactLoading from "react-loading"
 import SongList from "./SongList"
 import Playlist from "./Playlist"
@@ -39,21 +39,33 @@ const MusicColumn = (props) => {
         .catch(err => console.log("Error: " + err))
     }
 
+    let itemsHeight = "100%" // 0.325 * window.screen.height
+
     return (
         <>
         <div className="Column">
             <div className="Text" style={{
                 whiteSpace: "nowrap",
-                overflow: "hidden",
                 textOverflow: "ellipsis"
             }}>
-                {props.selection.playlist.name ? props.selection.playlist.name + " (Copy)" : "My Playlists"}
+                {(() => {
+                    let name = props.selection.playlist.name
+                    let shown
+                    if (name.length <= 12) {
+                        shown = name
+                    }
+                    else {
+                        shown = name.substring(0, 12) + "..."
+                    }
+
+                    return props.selection.playlist.name ? shown + " (Copy)" : "My Playlists"
+                })()}
             </div>
             
                 {(() => {
                     if (props.user.loggedIn && props.state.analyzed) {
                         return (
-                            <div className="Items" id="Music" style={{height: 0.325 * window.screen.height}}>
+                            <div className="Items" id="Music" style={{height: itemsHeight}}>
                             <SongList
                                 selection = {props.selection}
                                 setSelection = {props.setSelection}
@@ -65,12 +77,12 @@ const MusicColumn = (props) => {
                             </div>
                         )
                     }
-                    else if (props.user.fetched && !props.user.loggedIn || props.user.loggedIn && props.state.fetched && !props.state.analyzed) {
+                    else if ((props.user.fetched && !props.user.loggedIn) || (props.user.loggedIn && props.state.fetched && !props.state.analyzed)) {
 
                         return (
                             <div className="Items" id="Music" style={{
                                     overflowY: "hidden",
-                                    height: 0.325 * window.screen.height,
+                                    height: itemsHeight,
                                     display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "center",
@@ -89,7 +101,7 @@ const MusicColumn = (props) => {
                     }
                     else if (props.user.loggedIn && !props.state.fetched) {
                         return (
-                            <div className="Items" id="Music" style={{height: 0.325 * window.screen.height}}>
+                            <div className="Items" id="Music" style={{height: itemsHeight}}>
                             <Playlist
                                 user = {props.user}
                                 selection = {props.selection}
@@ -103,7 +115,7 @@ const MusicColumn = (props) => {
                     }
                     else if (!props.user.loggedIn) {
                         return (
-                            <div className="Items" id="Music" style={{height: 0.325 * window.screen.height}}>
+                            <div className="Items" id="Music" style={{height: itemsHeight}}>
                             <><br></br>Log in and select playlist...</>
                             </div>
                         )
@@ -163,9 +175,10 @@ const MusicColumn = (props) => {
                 {(props.state.fetched && !props.state.analyzed) ?
                     <div style={{
                         margin: "auto",
-                        width: "22.5%"
+                        width: "22.5%",
+                        overflow: "hidden"
                     }}>
-                        <ReactLoading type={"cylon"} height={"100%"} width={"100%"} />
+                        <ReactLoading type={"cylon"} height={"80px"} width={"80px"} />
                     </div>
                     :
                     <iframe
@@ -181,7 +194,7 @@ const MusicColumn = (props) => {
                             })()
                         }
                         width="100%"
-                        height="80"
+                        height="80px"
                         frameBorder="0"
                         allowtransparency="true"
                         allow="encrypted-media">

@@ -22,7 +22,8 @@ const SongList = (props) => {
                     props.focusOn(song.uri)
                 }
             }>
-                {"\"" + song.name + "\" (" + Math.round(100 * song.score) / 100 + "% match)"}
+                {"\"" + song.name + "\" - " + song.artists.join(", ") // "\" (" + Math.round(100 * song.score) / 100 + "% match, clusterID = " + song.cluster + ")"}
+                                        }
             </button>)}
         </>
     )

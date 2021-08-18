@@ -37,17 +37,17 @@ const App = () => {
     useEffect(() => {
         const initializeUser = () => {
             if (window.location.hash.includes("success-")) {
-                setUser({
-                    ...user,
+                setUser((u) => ({
+                    ...u,
                     fetched: true,
-                })
+                }))
                 let accessToken = window.location.hash.replace("#login-success-", "")
                 window.location.hash = "#login-success"
                 fetch("http://catchthatflow.com:9000/spotify/userData/" + accessToken)
                 .then(res => res.json())
                 .then(res => {
-                    setUser(() => ({
-                        ...user,
+                    setUser((u) => ({
+                        ...u,
                         name: res.username,
                         profilePic: res.profilePic,
                         playlists: res.playlists,

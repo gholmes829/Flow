@@ -7,7 +7,7 @@ const BloomGraph = props => {
     const fgRef = useRef()
 
     const focusOn = (node) => {
-        const distance = 100
+        const distance = 60
         const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z)
 
         fgRef.current.cameraPosition(
@@ -33,23 +33,33 @@ const BloomGraph = props => {
         focusOn(node)
     }, [fgRef])
 
+    const setFocusOn = props.setFocusOn
+
     useEffect(() => {
         const bloomPass = new UnrealBloomPass()
         bloomPass.strength = 2
         bloomPass.radius = 1
         bloomPass.threshold = 0.075
         fgRef.current.postProcessingComposer().addPass(bloomPass)
-        props.setFocusOn(() => (id) => focusOn(idToNode[id]))
     }, [])
+
+    useEffect(() => {
+        setFocusOn(() => (id) => focusOn(idToNode[id]))
+    }, [setFocusOn])
 
     return (
         <ForceGraph3D
             ref={fgRef}
             {...props}
             onNodeClick={handleClick}
-            nodeVisibility = {(node) => {
+            nodeVisibility = {(node) => {  // uses this as access point to update idToNode
                 idToNode[node.id] = node
-                return true
+                if ("nodeVisibility" in props) {
+                    return props.nodeVisibility(node)
+                }
+                else {
+                    return true
+                } 
             }}
         />
     )

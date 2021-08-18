@@ -86,7 +86,7 @@ router.post('/createPlaylist/:name/:token', (req, res) => {
 	
 	try {
 		spotifyAPI.setAccessToken(accessToken);
-		spotifyAPI.createPlaylist(playlistName, { 'description': 'Flow generated playlist!', 'public': true })  // change this to private?
+		spotifyAPI.createPlaylist(playlistName, { 'description': 'Flow generated playlist!', 'public': false })
 		.then(data => {
 			let id = data.body.id
 			return spotifyAPI.addTracksToPlaylist(id, songURIs, null)
@@ -191,7 +191,7 @@ router.get('/playlist/:id/:token', function(req, res, next) {
 router.get('/login', function(req, res, next) {
 	// log in to account
 	let state = generateRandomString(16);
-	let scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
+	let scope = "user-read-private user-read-email playlist-modify-public playlist-modify-private playlist-read-private"
 	let queryString = querystring.stringify({
 		response_type: 'code',
 		client_id: client_id,
