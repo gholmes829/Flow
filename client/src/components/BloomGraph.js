@@ -35,13 +35,13 @@ const BloomGraph = props => {
 
     const setFocusOn = props.setFocusOn
 
-    useEffect(() => {
-        const bloomPass = new UnrealBloomPass()
-        bloomPass.strength = 2
-        bloomPass.radius = 1
-        bloomPass.threshold = 0.075
-        fgRef.current.postProcessingComposer().addPass(bloomPass)
-    }, [])
+    // useEffect(() => {
+    //     const bloomPass = new UnrealBloomPass()
+    //     bloomPass.strength = 1
+    //     bloomPass.radius = 1
+    //     bloomPass.threshold = 0.075
+    //     fgRef.current.postProcessingComposer().addPass(bloomPass)
+    // }, [])
 
     useEffect(() => {
         setFocusOn(() => (id) => focusOn(idToNode[id]))
